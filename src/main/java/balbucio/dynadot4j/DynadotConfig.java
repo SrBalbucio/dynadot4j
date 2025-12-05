@@ -10,5 +10,12 @@ import lombok.Setter;
 public class DynadotConfig {
 
     private String apiKey;
+    private String apiSecret;
+    private String endpointUrl;
+
+    public static DynadotConfigBuilder createDefault() {
+        return DynadotConfig.builder()
+                .endpointUrl("https://api.dynadot.com");
+    }
 
 }
