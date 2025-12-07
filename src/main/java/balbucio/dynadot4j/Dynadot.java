@@ -13,7 +13,7 @@ public class Dynadot {
 
     public Dynadot(DynadotConfig config) {
         this.config = config;
-        this.requester = new DynadotRequester(config);
+        this.requester = new DynadotRequester(this);
         this.gson = new GsonBuilder()
                 .enableComplexMapKeySerialization()
                 .serializeNulls()
