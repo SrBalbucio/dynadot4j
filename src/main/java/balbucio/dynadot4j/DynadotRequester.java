@@ -2,6 +2,7 @@ package balbucio.dynadot4j;
 
 import balbucio.dynadot4j.exception.DynadotHttpException;
 import balbucio.dynadot4j.exception.DynadotTooManyRequestException;
+import balbucio.dynadot4j.model.AccountPriceLevel;
 import balbucio.dynadot4j.model.DynadotHttpResponse;
 import com.google.common.hash.Hashing;
 import org.json.JSONObject;
@@ -33,7 +34,10 @@ public class DynadotRequester implements Runnable {
         if (!config.getEndpointUrl().endsWith("/"))
             config.setEndpointUrl(config.getEndpointUrl() + "/");
 
-        this.executor.scheduleWithFixedDelay(this, 1, 3, TimeUnit.SECONDS);
+        AccountPriceLevel priceLevel = config.getPriceLevel();
+        for (int i = 0; i < priceLevel.getMaxRequestPerSec(); i++) {
+            this.executor.scheduleWithFixedDelay(this, 1, priceLevel.getDelay(), TimeUnit.SECONDS);
+        }
     }
 
     private String getPath(String path) {
@@ -85,7 +89,7 @@ public class DynadotRequester implements Runnable {
                 throwFailMessage(response);
 
                 future.complete(this.instance.getGson().fromJson(response.body(), DynadotHttpResponse.class));
-            } catch (Exception e){
+            } catch (Exception e) {
                 future.completeExceptionally(e);
             }
         };
@@ -142,7 +146,7 @@ public class DynadotRequester implements Runnable {
     public void run() {
         Runnable runnable = this.queue.poll();
 
-        if(runnable == null) return;
+        if (runnable == null) return;
 
         runnable.run();
     }

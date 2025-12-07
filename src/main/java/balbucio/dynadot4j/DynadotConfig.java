@@ -1,5 +1,6 @@
 package balbucio.dynadot4j;
 
+import balbucio.dynadot4j.model.AccountPriceLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,10 +16,12 @@ public class DynadotConfig {
     private String apiKey;
     private String apiSecret;
     private String endpointUrl;
+    private AccountPriceLevel priceLevel;
     private ScheduledExecutorService executorService;
 
     public static DynadotConfigBuilder createDefault() {
         return DynadotConfig.builder()
+                .priceLevel(AccountPriceLevel.REGULAR)
                 .executorService(Executors.newSingleThreadScheduledExecutor())
                 .endpointUrl("https://api.dynadot.com");
     }
