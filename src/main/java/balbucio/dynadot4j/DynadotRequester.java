@@ -1,24 +1,39 @@
 package balbucio.dynadot4j;
 
+import balbucio.dynadot4j.exception.DynadotHttpException;
+import balbucio.dynadot4j.exception.DynadotTooManyRequestException;
+import balbucio.dynadot4j.model.DynadotHttpResponse;
 import com.google.common.hash.Hashing;
 import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class DynadotRequester {
+public class DynadotRequester implements Runnable {
 
     private final DynadotConfig config;
     private final Dynadot instance;
+    private final ScheduledExecutorService executor;
+    private final Queue<Runnable> queue = new LinkedList<>();
 
     public DynadotRequester(Dynadot instance) {
         this.instance = instance;
         this.config = instance.getConfig();
+        this.executor = config.getExecutorService();
 
         if (!config.getEndpointUrl().endsWith("/"))
             config.setEndpointUrl(config.getEndpointUrl() + "/");
+
+        this.executor.scheduleWithFixedDelay(this, 1, 3, TimeUnit.SECONDS);
     }
 
     private String getPath(String path) {
@@ -59,97 +74,76 @@ public class DynadotRequester {
         return connection;
     }
 
-    public <T> T getResponse(String path, Connection.Method method, UUID requestId, String body, Class<T> clazz) {
-        Connection connection = getConnection(path, method, requestId, body);
-        Connection.Response response = connection.execute();
+    public Future<DynadotHttpResponse> getResponse(String path, Connection.Method method, UUID requestId, String body) throws IOException {
+        CompletableFuture<DynadotHttpResponse> future = new CompletableFuture<>();
 
-        throwFailMessage(response);
+        Runnable request = () -> {
+            try {
+                Connection connection = getConnection(path, method, requestId, body);
+                Connection.Response response = connection.execute();
 
-        return this.instance.getGson().fromJson(response.body(), clazz);
+                throwFailMessage(response);
+
+                future.complete(this.instance.getGson().fromJson(response.body(), DynadotHttpResponse.class));
+            } catch (Exception e){
+                future.completeExceptionally(e);
+            }
+        };
+        queue.offer(request);
+
+        return future;
     }
 
-    public JSONObject getResponse(String path, Connection.Method method, UUID requestId, String body) {
-        Connection connection = getConnection(path, method, requestId, body);
-        Connection.Response response = connection.execute();
-
-        throwFailMessage(response);
-
-        return new JSONObject(response.body());
-    }
-
-    public <T> T post(String path, UUID requestId, String body, Class<T> clazz) {
-        return getResponse(path, Connection.Method.POST, requestId, body, clazz);
-    }
-
-    public JSONObject post(String path, UUID requestId, String body) {
+    public Future<DynadotHttpResponse> post(String path, UUID requestId, String body) throws IOException {
         return getResponse(path, Connection.Method.POST, requestId, body);
     }
 
-    public <T> T post(String path, UUID requestId, Class<T> clazz) {
-        return getResponse(path, Connection.Method.POST, requestId, null, clazz);
-    }
-
-    public JSONObject post(String path, UUID requestId) {
-        return getResponse(path, Connection.Method.POST, requestId, null);
-    }
-
-    public <T> T post(String path, String body, Class<T> clazz) {
-        return getResponse(path, Connection.Method.POST, UUID.randomUUID(), body, clazz);
-    }
-
-    public JSONObject post(String path, String body) {
+    public Future<DynadotHttpResponse> post(String path, String body) throws IOException {
         return getResponse(path, Connection.Method.POST, UUID.randomUUID(), body);
     }
 
-    public <T> T put(String path, UUID requestId, String body, Class<T> clazz) {
-        return getResponse(path, Connection.Method.PUT, requestId, body, clazz);
-    }
-
-    public JSONObject put(String path, UUID requestId, String body) {
+    public Future<DynadotHttpResponse> put(String path, UUID requestId, String body) throws IOException {
         return getResponse(path, Connection.Method.PUT, requestId, body);
     }
 
-    public <T> T put(String path, String body, Class<T> clazz) {
-        return getResponse(path, Connection.Method.PUT, UUID.randomUUID(), body, clazz);
-    }
-
-    public JSONObject put(String path, String body) {
+    public Future<DynadotHttpResponse> put(String path, String body) throws IOException {
         return getResponse(path, Connection.Method.PUT, UUID.randomUUID(), body);
     }
 
-    public <T> T delete(String path, UUID requestId, String body, Class<T> clazz) {
-        return getResponse(path, Connection.Method.PUT, requestId, body, clazz);
+    public Future<DynadotHttpResponse> del(String path, UUID requestId) throws IOException {
+        return getResponse(path, Connection.Method.DELETE, requestId, null);
     }
 
-    public JSONObject delete(String path, UUID requestId, String body) {
-        return getResponse(path, Connection.Method.PUT, requestId, body);
+    public Future<DynadotHttpResponse> del(String path) throws IOException {
+        return getResponse(path, Connection.Method.DELETE, UUID.randomUUID(), null);
     }
 
-    public <T> T delete(String path, String body, Class<T> clazz) {
-        return getResponse(path, Connection.Method.PUT, UUID.randomUUID(), body, clazz);
+    public Future<DynadotHttpResponse> get(String path, UUID requestId) throws IOException {
+        return getResponse(path, Connection.Method.GET, requestId, null);
     }
 
-    public JSONObject delete(String path, String body) {
-        return getResponse(path, Connection.Method.PUT, UUID.randomUUID(), body);
-    }
-
-    public <T> T get(String path, UUID requestId, Class<T> clazz) {
-        return getResponse(path, Connection.Method.PUT, requestId, null, clazz);
-    }
-
-    public JSONObject get(String path, UUID requestId) {
-        return getResponse(path, Connection.Method.PUT, requestId, null);
-    }
-
-    public <T> T get(String path, Class<T> clazz) {
-        return getResponse(path, Connection.Method.PUT, UUID.randomUUID(), null, clazz);
-    }
-
-    public JSONObject get(String path) {
-        return getResponse(path, Connection.Method.PUT, UUID.randomUUID(), null);
+    public Future<DynadotHttpResponse> get(String path) throws IOException {
+        return getResponse(path, Connection.Method.GET, UUID.randomUUID(), null);
     }
 
     public void throwFailMessage(Connection.Response response) {
+        if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 202) return;
 
+        JSONObject body = new JSONObject(response.body());
+        JSONObject error = body.getJSONObject("error");
+
+        switch (response.statusCode()) {
+            case 429 -> throw new DynadotTooManyRequestException(response, error);
+            default -> throw new DynadotHttpException(response, error);
+        }
+    }
+
+    @Override
+    public void run() {
+        Runnable runnable = this.queue.poll();
+
+        if(runnable == null) return;
+
+        runnable.run();
     }
 }
