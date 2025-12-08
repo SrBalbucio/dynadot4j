@@ -1,7 +1,9 @@
 package balbucio.dynadot4j.client;
 
 import balbucio.dynadot4j.Dynadot;
+import balbucio.dynadot4j.action.DomainRegistration;
 import balbucio.dynadot4j.exception.InvalidDomainException;
+import balbucio.dynadot4j.model.DomainRegisterResult;
 import balbucio.dynadot4j.model.DomainSearchResult;
 import balbucio.dynadot4j.model.DynadotHttpResponse;
 
@@ -34,6 +36,12 @@ public class DomainClient extends Client {
                         response.asJSON().getJSONArray("domain_list")
                                 .toList().stream().map((obj) -> (String) obj)
                                 .collect(Collectors.toCollection(ArrayList::new)));
+    }
+
+    public Future<DomainRegisterResult> register(DomainRegistration action) {
+
+        return requester.post(getPath(action.getDomainName() + "/suggestion_search"), gson.toJson(action))
+                .thenApply((response) -> response.asClazz(gson, DomainRegisterResult.class));
     }
 
     private String getPath(String additional) {
