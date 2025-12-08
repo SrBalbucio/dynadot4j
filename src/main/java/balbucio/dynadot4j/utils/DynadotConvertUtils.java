@@ -2,7 +2,7 @@ package balbucio.dynadot4j.utils;
 
 import java.math.BigDecimal;
 
-public class DynadotModelUtils {
+public class DynadotConvertUtils {
 
     public static boolean asBool(String value) {
         return value != null && value.equalsIgnoreCase("yes");
@@ -31,5 +31,9 @@ public class DynadotModelUtils {
             throw new RuntimeException("O período não é anual: " + values[1]);
 
         return Integer.parseInt(values[0]);
+    }
+
+    public static String toBool(boolean bool) {
+        return bool ? "yes" : "no";
     }
 }

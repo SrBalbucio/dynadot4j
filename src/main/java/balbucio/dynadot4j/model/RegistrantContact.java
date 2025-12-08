@@ -2,6 +2,7 @@ package balbucio.dynadot4j.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
+import org.json.JSONObject;
 
 @Getter
 @Setter
@@ -24,4 +25,19 @@ public class RegistrantContact {
     private String city;
     private String state;
     private String country;
+
+
+    public JSONObject toJSON(){
+        JSONObject obj = new JSONObject();
+        obj.put("organization", organization);
+        obj.put("name", name);
+        obj.put("email", email);
+        obj.put("phone_number", phoneNumber);
+        obj.put("phone_cc", phoneCC);
+        obj.put("address", address);
+        obj.put("city", city);
+        obj.put("state", state);
+        obj.put("country", country);
+        return obj;
+    }
 }

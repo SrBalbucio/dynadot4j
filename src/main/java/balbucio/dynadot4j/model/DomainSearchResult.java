@@ -1,6 +1,6 @@
 package balbucio.dynadot4j.model;
 
-import balbucio.dynadot4j.utils.DynadotModelUtils;
+import balbucio.dynadot4j.utils.DynadotConvertUtils;
 import com.google.gson.annotations.SerializedName;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,15 +25,15 @@ public class DomainSearchResult {
 
     public boolean isAvailable() {
         System.out.println(available);
-        return DynadotModelUtils.asBool(available);
+        return DynadotConvertUtils.asBool(available);
     }
 
     public boolean isPremium() {
-        return DynadotModelUtils.asBool(premium);
+        return DynadotConvertUtils.asBool(premium);
     }
 
     public boolean isShowingPrice() {
-        return DynadotModelUtils.asBool(showPrice);
+        return DynadotConvertUtils.asBool(showPrice);
     }
 
     public Optional<DomainPriceEntry> getPriceByYearPeriod(int year){
