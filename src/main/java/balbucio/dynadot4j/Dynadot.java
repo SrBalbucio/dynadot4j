@@ -1,5 +1,6 @@
 package balbucio.dynadot4j;
 
+import balbucio.dynadot4j.client.ContactClient;
 import balbucio.dynadot4j.client.DomainClient;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -13,6 +14,7 @@ public class Dynadot {
     private final Gson gson;
 
     private final DomainClient domainClient;
+    private final ContactClient contactClient;
 
     public Dynadot(DynadotConfig config) {
         this.config = config;
@@ -27,5 +29,6 @@ public class Dynadot {
                 .create();
 
         this.domainClient = new DomainClient(this);
+        this.contactClient = new ContactClient(this);
     }
 }

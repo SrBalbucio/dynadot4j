@@ -47,6 +47,7 @@ public class DynadotTest {
             assertTrue(result.isAvailable());
             Optional<DomainPriceEntry> oneYear = result.getPriceByYearPeriod(1);
             assertTrue(oneYear.isPresent());
+            assertTrue(oneYear.get().registrationPriceAsDouble() > 0.0);
             System.out.println(oneYear.get());
         });
     }

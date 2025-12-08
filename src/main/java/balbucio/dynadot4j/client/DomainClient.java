@@ -17,16 +17,16 @@ public class DomainClient extends Client {
     public Future<DomainSearchResult> search(String domainName, String currency) {
         if (domainName.isEmpty()) throw new InvalidDomainException(domainName);
 
-        CompletableFuture<DomainSearchResult> result = new CompletableFuture<>();
+//        CompletableFuture<DomainSearchResult> result = new CompletableFuture<>();
         CompletableFuture<DynadotHttpResponse> future =
                 requester.get(getPath(domainName + "/search?show_price=true&currency=" + currency.toUpperCase()));
 
-        future.handle((response, ex) -> {
-            if (ex != null) return result.completeExceptionally(ex);
-            return result.complete(response.asClazz(gson, DomainSearchResult.class));
-        });
+//        future.handle((response, ex) -> {
+//            if (ex != null) return result.completeExceptionally(ex);
+//            return result.complete(response.asClazz(gson, DomainSearchResult.class));
+//        });
 
-        return result;
+        return future.thenApply((response) -> response.asClazz(gson, DomainSearchResult.class));
     }
 
     private String getPath(String additional) {
