@@ -5,6 +5,7 @@ import balbucio.dynadot4j.exception.DynadotTooManyRequestException;
 import balbucio.dynadot4j.model.AccountPriceLevel;
 import balbucio.dynadot4j.model.DynadotHttpResponse;
 import com.google.common.hash.Hashing;
+import lombok.Getter;
 import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -19,6 +20,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@Getter
 public class DynadotRequester implements Runnable {
 
     private final DynadotConfig config;
@@ -78,17 +80,18 @@ public class DynadotRequester implements Runnable {
         return connection;
     }
 
-    public Future<DynadotHttpResponse> getResponse(String path, Connection.Method method, UUID requestId, String body) throws IOException {
+    public CompletableFuture<DynadotHttpResponse> getResponse(String path, Connection.Method method, UUID requestId, String body) {
         CompletableFuture<DynadotHttpResponse> future = new CompletableFuture<>();
 
         Runnable request = () -> {
             try {
                 Connection connection = getConnection(path, method, requestId, body);
                 Connection.Response response = connection.execute();
+                String raw = response.body();
 
-                throwFailMessage(response);
+                throwFailMessage(response, raw);
 
-                future.complete(this.instance.getGson().fromJson(response.body(), DynadotHttpResponse.class));
+                future.complete(this.instance.getGson().fromJson(raw, DynadotHttpResponse.class));
             } catch (Exception e) {
                 future.completeExceptionally(e);
             }
@@ -98,47 +101,50 @@ public class DynadotRequester implements Runnable {
         return future;
     }
 
-    public Future<DynadotHttpResponse> post(String path, UUID requestId, String body) throws IOException {
+    public CompletableFuture<DynadotHttpResponse> post(String path, UUID requestId, String body) {
         return getResponse(path, Connection.Method.POST, requestId, body);
     }
 
-    public Future<DynadotHttpResponse> post(String path, String body) throws IOException {
+    public CompletableFuture<DynadotHttpResponse> post(String path, String body) {
         return getResponse(path, Connection.Method.POST, UUID.randomUUID(), body);
     }
 
-    public Future<DynadotHttpResponse> put(String path, UUID requestId, String body) throws IOException {
+    public CompletableFuture<DynadotHttpResponse> put(String path, UUID requestId, String body) {
         return getResponse(path, Connection.Method.PUT, requestId, body);
     }
 
-    public Future<DynadotHttpResponse> put(String path, String body) throws IOException {
+    public CompletableFuture<DynadotHttpResponse> put(String path, String body) {
         return getResponse(path, Connection.Method.PUT, UUID.randomUUID(), body);
     }
 
-    public Future<DynadotHttpResponse> del(String path, UUID requestId) throws IOException {
+    public CompletableFuture<DynadotHttpResponse> del(String path, UUID requestId) {
         return getResponse(path, Connection.Method.DELETE, requestId, null);
     }
 
-    public Future<DynadotHttpResponse> del(String path) throws IOException {
+    public CompletableFuture<DynadotHttpResponse> del(String path) {
         return getResponse(path, Connection.Method.DELETE, UUID.randomUUID(), null);
     }
 
-    public Future<DynadotHttpResponse> get(String path, UUID requestId) throws IOException {
+    public CompletableFuture<DynadotHttpResponse> get(String path, UUID requestId) {
         return getResponse(path, Connection.Method.GET, requestId, null);
     }
 
-    public Future<DynadotHttpResponse> get(String path) throws IOException {
+    public CompletableFuture<DynadotHttpResponse> get(String path) {
         return getResponse(path, Connection.Method.GET, UUID.randomUUID(), null);
     }
 
-    public void throwFailMessage(Connection.Response response) {
-        if (response.statusCode() == 200 || response.statusCode() == 201 || response.statusCode() == 202) return;
+    public void throwFailMessage(Connection.Response response, String bodyRaw) {
 
-        JSONObject body = new JSONObject(response.body());
+        JSONObject body = new JSONObject(bodyRaw);
+        System.out.println(body);
+        int statusCode = body.optInt("code", response.statusCode());
+
+        if (statusCode == 200 || statusCode == 201 || statusCode == 202) return;
+
         JSONObject error = body.getJSONObject("error");
-
         switch (response.statusCode()) {
-            case 429 -> throw new DynadotTooManyRequestException(response, error);
-            default -> throw new DynadotHttpException(response, error);
+            case 429 -> throw new DynadotTooManyRequestException(response, error, statusCode);
+            default -> throw new DynadotHttpException(response, error, statusCode);
         }
     }
 

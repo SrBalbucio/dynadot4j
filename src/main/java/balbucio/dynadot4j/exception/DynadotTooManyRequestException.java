@@ -5,7 +5,7 @@ import org.jsoup.Connection;
 
 public class DynadotTooManyRequestException extends DynadotHttpException {
 
-    public DynadotTooManyRequestException(Connection.Response response, JSONObject data) {
-        super("You have reached the maximum number of requests per second. Please wait a moment and try again.", response, data);
+    public DynadotTooManyRequestException(Connection.Response response, JSONObject data, int statusCode) {
+        super("You have reached the maximum number of requests per second. Please wait a moment and try again.", response, data, statusCode);
     }
 }
