@@ -130,7 +130,7 @@ public class DomainClientTest {
     @Order(5)
     public void setNameservers() {
         assertDoesNotThrow(() -> {
-            domainClient.setNameservers(domainName, List.of("ns1.example.net", "ns1.example.net")).get();
+            domainClient.setNameservers(domainName, List.of("ns1.example.net", "ns2.example.net")).get();
         });
     }
 
@@ -170,5 +170,15 @@ public class DomainClientTest {
         });
     }
 
-
+    @Test
+    @DisplayName("Get Domain Info")
+    @Order(10)
+    public void getDomainInfo() {
+        assertDoesNotThrow(() -> {
+            DomainInfo domainInfo = domainClient.getDomain(domainName).get();
+            assertNotNull(domainInfo);
+            System.out.println(domainInfo);
+            assertEquals(domainName, domainInfo.getDomainName());
+        });
+    }
 }

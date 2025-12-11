@@ -6,6 +6,7 @@ import balbucio.dynadot4j.exception.InvalidDomainException;
 import balbucio.dynadot4j.model.*;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -175,6 +176,20 @@ public class DomainClient extends Client {
 
         return requester.put(getPath(domainName + "/renew_option"), body.toString())
                 .thenApply((response) -> null);
+    }
+
+    /**
+     * Recupera os detalhes de domínio registrado.
+     * @param domainName domínio a ser exibido
+     * @return detalhes do domínio numa promessa
+     */
+    public Future<DomainInfo> getDomain(String domainName) {
+        return requester.get(getPath(domainName))
+                .thenApply((response) -> {
+                    JSONObject data = response.asJSON();
+                    JSONArray domainList = data.getJSONArray("domainInfo");
+                    return gson.fromJson(domainList.getJSONObject(0).toString(), DomainInfo.class);
+                });
     }
 
     private String getPath(String additional) {
