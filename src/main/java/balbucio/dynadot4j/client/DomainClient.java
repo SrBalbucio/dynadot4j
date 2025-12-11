@@ -95,16 +95,38 @@ public class DomainClient extends Client {
      * @param domainName domínio para renovação
      * @param duration   tempo de renovação (1-10 anos)
      * @param year       ano de efetivação da renovação (geralmente o ano da expiração)
-     * @return a nova data de expiração do domínio
+     * @return a nova data de expiração do domínio numa promessa
      */
     public Future<Long> renew(@NonNull String domainName, int duration, int year) {
         return renew(domainName, duration, year, false);
     }
 
+    /**
+     * Defina os nameservers do domínio
+     *
+     * @param domainName  domínio a ser alterado
+     * @param nameservers lista de nameserver (ex.: ns01.example.com)
+     * @return promessa de conclusão
+     */
     public Future<Void> setNameservers(String domainName, List<String> nameservers) {
         JSONObject body = new JSONObject();
         body.put("nameserver_list", nameservers);
         return requester.put(getPath(domainName + "/nameservers"), body.toString())
+                .thenApply((response) -> null);
+    }
+
+    /**
+     * Define o domínio como estacionado (sem uso)
+     *
+     * @param domainName domínio a ser estacionado
+     * @param ads        incluir AD's de terceiros
+     * @return promessa de conclusão
+     */
+    public Future<Void> setParking(String domainName, boolean ads) {
+        JSONObject body = new JSONObject();
+        body.put("with_ads", ads);
+
+        return requester.put(getPath(domainName + "/parking"), body.toString())
                 .thenApply((response) -> null);
     }
 

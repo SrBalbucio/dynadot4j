@@ -130,7 +130,16 @@ public class DomainClientTest {
     @Order(5)
     public void setNameservers() {
         assertDoesNotThrow(() -> {
-            domainClient.setNameservers(domainName, List.of("ns1.example.net", "ns1.example.net"));
+            domainClient.setNameservers(domainName, List.of("ns1.example.net", "ns1.example.net")).get();
+        });
+    }
+
+    @Test
+    @DisplayName("Set Parking")
+    @Order(6)
+    public void setParking() {
+        assertDoesNotThrow(() -> {
+            domainClient.setParking(domainName, false).get();
         });
     }
 
