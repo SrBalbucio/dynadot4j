@@ -5,6 +5,7 @@ import balbucio.dynadot4j.client.DomainClient;
 import balbucio.dynadot4j.model.*;
 import org.junit.jupiter.api.*;
 
+import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -24,8 +25,16 @@ public class DomainClientTest {
     public void beforeAll() {
         String apiKey = System.getenv("DYNADOT_APIKEY");
         String apiSecret = System.getenv("DYNADOT_APISECRET");
+
         // defina qualquer um a não ser que esteja utilizando a Key de produção (loucura inclusive)
-        this.domainName = System.getenv("DYNADOT_DOMAINNAME");
+        this.domainName = JOptionPane.showInputDialog(null,
+                "Qual será o domínio utilizado para testes?",
+                "Dynadot4j Test Unit",
+                JOptionPane.QUESTION_MESSAGE);
+
+        if (this.domainName == null || this.domainName.isEmpty()) {
+            this.domainName = System.getenv("DYNADOT_DOMAINNAME");
+        }
 
         DynadotConfig config = DynadotConfig.createDefault()
                 .endpointUrl("https://api-sandbox.dynadot.com")
@@ -104,12 +113,25 @@ public class DomainClientTest {
     @Order(4)
     public void renewDomain() {
         assertDoesNotThrow(() -> {
-            Long result = domainClient.renew(domainName, 1, 2026).get();
-            assertTrue(result > 0);
-            System.out.println(result);
+            if (!registered) {
+                Long result = domainClient.renew(domainName, 1, 2026).get();
+                assertTrue(result > 0);
+                System.out.println(result);
 
-            Date expirationDate = new Date(result);
-            System.out.println(sdf.format(expirationDate));
+                Date expirationDate = new Date(result);
+                System.out.println(sdf.format(expirationDate));
+            }
         });
     }
+
+
+    @Test
+    @DisplayName("Set NS")
+    @Order(5)
+    public void setNameservers() {
+        assertDoesNotThrow(() -> {
+            domainClient.setNameservers(domainName, List.of("ns1.example.net", "ns1.example.net"));
+        });
+    }
+
 }

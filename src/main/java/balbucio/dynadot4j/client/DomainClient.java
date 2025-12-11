@@ -101,6 +101,13 @@ public class DomainClient extends Client {
         return renew(domainName, duration, year, false);
     }
 
+    public Future<Void> setNameservers(String domainName, List<String> nameservers) {
+        JSONObject body = new JSONObject();
+        body.put("nameserver_list", nameservers);
+        return requester.put(getPath(domainName + "/nameservers"), body.toString())
+                .thenApply((response) -> null);
+    }
+
     private String getPath(String additional) {
         return "restful/v1/domains" + (additional != null ? "/" + additional : "");
     }
