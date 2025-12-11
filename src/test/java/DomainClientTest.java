@@ -88,6 +88,7 @@ public class DomainClientTest {
                     .withDuration(1)
                     .addNS("ns1.example.com")
                     .addNS("ns2.example.com")
+                    .withPrivacy(true)
             ).get();
             assertNotNull(result);
             System.out.println(result);

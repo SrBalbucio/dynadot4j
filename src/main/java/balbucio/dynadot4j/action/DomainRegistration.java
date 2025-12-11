@@ -1,5 +1,6 @@
 package balbucio.dynadot4j.action;
 
+import balbucio.dynadot4j.model.DomainPrivacy;
 import balbucio.dynadot4j.model.RegistrantContact;
 import balbucio.dynadot4j.utils.DynadotConvertUtils;
 import com.google.gson.annotations.SerializedName;
@@ -21,7 +22,7 @@ public class DomainRegistration {
     private int customerId = 0;
     @SerializedName("name_server_list")
     private List<String> nameserver = new ArrayList<>();
-    private boolean privacy = true;
+    private DomainPrivacy privacy = DomainPrivacy.FULL;
     private String currency = "USD";
     private boolean registerPremium = false;
     private String couponCode = "";
@@ -63,7 +64,7 @@ public class DomainRegistration {
         return this;
     }
 
-    public DomainRegistration withPrivacy(boolean privacy) {
+    public DomainRegistration withPrivacy(DomainPrivacy privacy) {
         this.privacy = privacy;
         return this;
     }
@@ -121,17 +122,13 @@ public class DomainRegistration {
         domain.put("admin_contact", admin.toJSON());
         domain.put("tech_contact", tech.toJSON());
         domain.put("billing_contact", billing.toJSON());
-        domain.put("privacy", privacy);
-//        domain.put("privacy", DynadotConvertUtils.toBool(privacy));
+        domain.put("privacy", privacy.getLabel());
 
         JSONObject obj = new JSONObject();
         obj.put("domain", domain);
         obj.put("register_premium", registerPremium);
         obj.put("coupon_code", couponCode);
         obj.put("currency", currency);
-        obj.put("privacy", privacy);
-
-        System.out.println(obj.toString());
         return obj;
     }
 

@@ -36,4 +36,8 @@ public class DynadotConvertUtils {
     public static String toBool(boolean bool) {
         return bool ? "yes" : "no";
     }
+
+    public static String toOptBool(boolean bool) {
+        return bool ? "true" : "false";
+    }
 }
