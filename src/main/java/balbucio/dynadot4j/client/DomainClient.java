@@ -8,6 +8,7 @@ import balbucio.dynadot4j.model.DomainSearchResult;
 import balbucio.dynadot4j.model.DynadotHttpResponse;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,13 @@ public class DomainClient extends Client {
         super(dynadot);
     }
 
+    /**
+     * Pesquisa a disponibilidade de um domínio e recupera detalhes para registro.
+     *
+     * @param domainName domínio interessado
+     * @param currency   moeda em que os valores devem ser retornados (USD, BRL)
+     * @return resultado da pesquisa numa promessa
+     */
     public Future<DomainSearchResult> search(@NonNull String domainName, @Nullable String currency) {
         if (domainName.isEmpty()) throw new InvalidDomainException(domainName);
         if (currency == null) currency = "USD";
@@ -31,6 +39,13 @@ public class DomainClient extends Client {
         return future.thenApply((response) -> response.asClazz(gson, DomainSearchResult.class));
     }
 
+    /**
+     * Procura por sugestões para um domínio (nem sempre tem)
+     *
+     * @param domainName domínio para registro
+     * @param tlds       extensões de domínios desejadas (ex.: com, net, xyz)
+     * @return lista de sugestões de domínio numa promessa
+     */
     public Future<ArrayList<String>> getSuggestionSearch(@NonNull String domainName, @NonNull List<String> tlds) {
         if (domainName.isEmpty()) throw new InvalidDomainException(domainName);
         if (tlds.isEmpty()) tlds.add("com");
@@ -43,10 +58,47 @@ public class DomainClient extends Client {
                 .exceptionally((ex) -> new ArrayList<>());
     }
 
+    /**
+     * Inicia o processo de registro de um domínio (confirme que você tem saldo disponível).
+     *
+     * @param action ação de registro de domínio
+     * @return resultado do registro numa promessa
+     */
     public Future<DomainRegisterResult> register(DomainRegistration action) {
 
         return requester.post(getPath(action.getDomainName() + "/register"), action.toJSON().toString())
                 .thenApply((response) -> response.asClazz(gson, DomainRegisterResult.class));
+    }
+
+    /**
+     * Renova o domínio fornecido (confirme que você tem saldo disponível)
+     *
+     * @param domainName                        domínio para renovação
+     * @param duration                          tempo de renovação (1-10 anos)
+     * @param year                              ano de efetivação da renovação (geralmente o ano da expiração)
+     * @param no_renew_if_late_renew_fee_needed não renove se for necessária uma taxa de renovação tardia (por padrão, false).
+     * @return a nova data de expiração do domínio
+     */
+    public Future<Long> renew(@NonNull String domainName, int duration, int year, boolean no_renew_if_late_renew_fee_needed) {
+        JSONObject body = new JSONObject()
+                .put("duration", duration)
+                .put("year", year)
+                .put("no_renew_if_late_renew_fee_needed", no_renew_if_late_renew_fee_needed);
+
+        return requester.post(getPath(domainName + "/renew"), body.toString())
+                .thenApply((response) -> response.asJSON().getLong("expiration_date"));
+    }
+
+    /**
+     * Renova o domínio fornecido (confirme que você tem saldo disponível)
+     *
+     * @param domainName domínio para renovação
+     * @param duration   tempo de renovação (1-10 anos)
+     * @param year       ano de efetivação da renovação (geralmente o ano da expiração)
+     * @return a nova data de expiração do domínio
+     */
+    public Future<Long> renew(@NonNull String domainName, int duration, int year) {
+        return renew(domainName, duration, year, false);
     }
 
     private String getPath(String additional) {

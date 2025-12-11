@@ -2,12 +2,11 @@ import balbucio.dynadot4j.Dynadot;
 import balbucio.dynadot4j.DynadotConfig;
 import balbucio.dynadot4j.action.DomainRegistration;
 import balbucio.dynadot4j.client.DomainClient;
-import balbucio.dynadot4j.model.DomainPriceEntry;
-import balbucio.dynadot4j.model.DomainRegisterResult;
-import balbucio.dynadot4j.model.DomainSearchResult;
-import balbucio.dynadot4j.model.RegistrantContact;
+import balbucio.dynadot4j.model.*;
 import org.junit.jupiter.api.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +37,8 @@ public class DomainClientTest {
         this.domainClient = dynadot.getDomainClient();
     }
 
+    private boolean registered;
+
     @Test
     @DisplayName("Search Domain (avaliable)")
     @Order(1)
@@ -46,8 +47,7 @@ public class DomainClientTest {
             DomainSearchResult result = domainClient.search(domainName, "USD").get();
             assertNotNull(result);
 
-            // verifique no site antes testar
-            assertTrue(result.isAvailable());
+            registered = !result.isAvailable();
             Optional<DomainPriceEntry> oneYear = result.getPriceByYearPeriod(1);
             assertTrue(oneYear.isPresent());
             assertTrue(oneYear.get().registrationPriceAsDouble() > 0.0);
@@ -58,7 +58,7 @@ public class DomainClientTest {
     @Test
     @DisplayName("Get Suggestions")
     @Order(2)
-    public void getSuggestions(){
+    public void getSuggestions() {
         assertDoesNotThrow(() -> {
             List<String> result = domainClient.getSuggestionSearch(domainName, List.of("com", "net")).get();
             assertNotNull(result);
@@ -70,28 +70,46 @@ public class DomainClientTest {
     @Test
     @DisplayName("Register Domain")
     @Order(3)
-    public void registerDomain(){
+    public void registerDomain() {
         assertDoesNotThrow(() -> {
-            DomainRegisterResult result = domainClient.register(DomainRegistration.create(domainName)
-                    .withContact(RegistrantContact.builder()
-                            .name("Aleskib")
-                            .email("example@email.com")
-                            .city("São Paulo")
-                            .state("SP")
-                            .address("Rua da Realeza, 2989")
-                            .country("Brazil")
-                            .organization("NAVI")
-                            .phoneCC("55")
-                            .phoneNumber("9934820745")
-                            .build())
-                    .withCustomerId(0)
-                    .withDuration(1)
-                    .addNS("ns1.example.com")
-                    .addNS("ns2.example.com")
-                    .withPrivacy(true)
-            ).get();
-            assertNotNull(result);
+            if (!registered) {
+                DomainRegisterResult result = domainClient.register(DomainRegistration.create(domainName)
+                        .withContact(RegistrantContact.builder()
+                                .name("Aleskib")
+                                .email("example@email.com")
+                                .city("São Paulo")
+                                .state("SP")
+                                .address("Rua da Realeza, 2989")
+                                .country("Brazil")
+                                .organization("NAVI")
+                                .phoneCC("55")
+                                .phoneNumber("9934820745")
+                                .build())
+                        .withCustomerId(0)
+                        .withDuration(1)
+                        .addNS("ns1.example.com")
+                        .addNS("ns2.example.com")
+                        .withPrivacy(DomainPrivacy.FULL)
+                ).get();
+                assertNotNull(result);
+                System.out.println(result);
+            }
+        });
+    }
+
+    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+    @Test
+    @DisplayName("Renew Domain")
+    @Order(4)
+    public void renewDomain() {
+        assertDoesNotThrow(() -> {
+            Long result = domainClient.renew(domainName, 1, 2026).get();
+            assertTrue(result > 0);
             System.out.println(result);
+
+            Date expirationDate = new Date(result);
+            System.out.println(sdf.format(expirationDate));
         });
     }
 }
