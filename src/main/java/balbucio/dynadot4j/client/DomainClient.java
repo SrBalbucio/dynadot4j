@@ -137,7 +137,7 @@ public class DomainClient extends Client {
      * @param domainName   domínio a ser alterado
      * @param level        nível de proteção (FULL, PARTIAL)
      * @param whoIsPrivacy proteger o domínio no WHOIS
-     * @return
+     * @return promessa de conclusão
      */
     public Future<Void> setPrivacy(String domainName, DomainPrivacy level, boolean whoIsPrivacy) {
         JSONObject body = new JSONObject();
@@ -145,6 +145,23 @@ public class DomainClient extends Client {
         body.put("whois_privacy_option", whoIsPrivacy);
 
         return requester.put(getPath(domainName + "/privacy"), body.toString())
+                .thenApply((response) -> null);
+    }
+
+    /**
+     * Definir redirecionamento automático ao domínio
+     *
+     * @param domainName domínio a ser alterado
+     * @param forwardUrl URL de redirecionamento
+     * @param temporary  informa ao cliente se o redirecionamento é temporário ou permanente
+     * @return promessa de conclusão
+     */
+    public Future<Void> setForwarding(String domainName, String forwardUrl, boolean temporary) {
+        JSONObject body = new JSONObject();
+        body.put("forward_url", forwardUrl);
+        body.put("is_temporary", temporary);
+
+        return requester.put(getPath(domainName + "/domain_forwarding"), body.toString())
                 .thenApply((response) -> null);
     }
 

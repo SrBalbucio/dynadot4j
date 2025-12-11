@@ -152,4 +152,14 @@ public class DomainClientTest {
         });
     }
 
+    @Test
+    @DisplayName("Set Forwarding")
+    @Order(8)
+    public void setForwarding() {
+        assertDoesNotThrow(() -> {
+            domainClient.setForwarding(domainName, "https://discord.gg", false).get();
+        });
+    }
+
+
 }
