@@ -3,6 +3,7 @@ package balbucio.dynadot4j.client;
 import balbucio.dynadot4j.Dynadot;
 import balbucio.dynadot4j.action.DomainRegistration;
 import balbucio.dynadot4j.exception.InvalidDomainException;
+import balbucio.dynadot4j.model.DomainPrivacy;
 import balbucio.dynadot4j.model.DomainRegisterResult;
 import balbucio.dynadot4j.model.DomainSearchResult;
 import balbucio.dynadot4j.model.DynadotHttpResponse;
@@ -127,6 +128,23 @@ public class DomainClient extends Client {
         body.put("with_ads", ads);
 
         return requester.put(getPath(domainName + "/parking"), body.toString())
+                .thenApply((response) -> null);
+    }
+
+    /**
+     * Define o nível de privacidade de um domínio.
+     *
+     * @param domainName   domínio a ser alterado
+     * @param level        nível de proteção (FULL, PARTIAL)
+     * @param whoIsPrivacy proteger o domínio no WHOIS
+     * @return
+     */
+    public Future<Void> setPrivacy(String domainName, DomainPrivacy level, boolean whoIsPrivacy) {
+        JSONObject body = new JSONObject();
+        body.put("privacy_level", level.getLabel());
+        body.put("whois_privacy_option", whoIsPrivacy);
+
+        return requester.put(getPath(domainName + "/privacy"), body.toString())
                 .thenApply((response) -> null);
     }
 

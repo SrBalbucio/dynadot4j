@@ -143,4 +143,13 @@ public class DomainClientTest {
         });
     }
 
+    @Test
+    @DisplayName("Set Privacy")
+    @Order(7)
+    public void setPrivacy() {
+        assertDoesNotThrow(() -> {
+            domainClient.setPrivacy(domainName, DomainPrivacy.FULL, true).get();
+        });
+    }
+
 }
