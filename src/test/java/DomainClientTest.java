@@ -161,5 +161,14 @@ public class DomainClientTest {
         });
     }
 
+    @Test
+    @DisplayName("Set Renew Option")
+    @Order(9)
+    public void setRenewOption() {
+        assertDoesNotThrow(() -> {
+            domainClient.setRenewOption(domainName, DomainRenewOption.AUTO);
+        });
+    }
+
 
 }

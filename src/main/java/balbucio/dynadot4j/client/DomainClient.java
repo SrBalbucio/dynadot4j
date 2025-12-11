@@ -3,10 +3,7 @@ package balbucio.dynadot4j.client;
 import balbucio.dynadot4j.Dynadot;
 import balbucio.dynadot4j.action.DomainRegistration;
 import balbucio.dynadot4j.exception.InvalidDomainException;
-import balbucio.dynadot4j.model.DomainPrivacy;
-import balbucio.dynadot4j.model.DomainRegisterResult;
-import balbucio.dynadot4j.model.DomainSearchResult;
-import balbucio.dynadot4j.model.DynadotHttpResponse;
+import balbucio.dynadot4j.model.*;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
@@ -162,6 +159,21 @@ public class DomainClient extends Client {
         body.put("is_temporary", temporary);
 
         return requester.put(getPath(domainName + "/domain_forwarding"), body.toString())
+                .thenApply((response) -> null);
+    }
+
+    /**
+     * Defina a operação desejada na renovação (RESET, AUTO, DONOT)
+     *
+     * @param domainName domínio a ser alterado
+     * @param option     opção desejada para renovação
+     * @return promessa de conclusão
+     */
+    public Future<Void> setRenewOption(String domainName, DomainRenewOption option) {
+        JSONObject body = new JSONObject();
+        body.put("renew_option", option.getLabel());
+
+        return requester.put(getPath(domainName + "/renew_option"), body.toString())
                 .thenApply((response) -> null);
     }
 
