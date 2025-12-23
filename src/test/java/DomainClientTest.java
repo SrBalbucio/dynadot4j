@@ -64,6 +64,18 @@ public class DomainClientTest {
         });
     }
 
+
+    @Test
+    @DisplayName("Bulk Search Domain (avaliable)")
+    @Order(1)
+    public void bulkSearchDomain() {
+        assertDoesNotThrow(() -> {
+            List<DomainSearchResult> result = domainClient.searchBulk(domainName, "USD").get();
+            assertNotNull(result);
+            assertFalse(result.isEmpty());
+        });
+    }
+
     @Test
     @DisplayName("Get Suggestions")
     @Order(2)

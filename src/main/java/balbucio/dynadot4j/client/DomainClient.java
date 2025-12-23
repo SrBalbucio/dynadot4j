@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -36,6 +37,53 @@ public class DomainClient extends Client {
                 requester.get(getPath(domainName + "/search?show_price=true&currency=" + currency.toUpperCase()));
 
         return future.thenApply((response) -> response.asClazz(gson, DomainSearchResult.class));
+    }
+
+    public Future<List<DomainSearchResult>> searchBulk(@NonNull String domainName, @Nullable String currency) {
+        // TODO criar lista de possíveis domínios de forma menos arcaica
+        String word = domainName.split("\\.")[0]; // remove o nome antigo
+        return searchBulk(Arrays.asList(
+                word + ".net",
+                word + ".com",
+                word + ".xyz",
+                word + ".co",
+                word + ".vip",
+                word + ".bio",
+                word + ".app",
+                word + ".dev",
+                word + ".org",
+                word + ".shop",
+                word + ".store",
+                word + ".site",
+                word + ".wiki",
+                word + ".host"
+        ), currency);
+    }
+
+    /**
+     * Pesquisa a disponibilidade de vários domínios e recupera detalhes para registro.
+     *
+     * @param domainNames domínio interessado
+     * @param currency    moeda em que os valores devem ser retornados (USD, BRL)
+     * @return resultado da pesquisa numa promessa
+     */
+    public Future<List<DomainSearchResult>> searchBulk(@NonNull List<String> domainNames, @Nullable String currency) {
+        if (domainNames.isEmpty())
+            throw new InvalidDomainException(domainNames);
+        if (currency == null)
+            currency = "USD";
+        if (domainNames.size() > config.getPriceLevel().getSearchLimit())
+            domainNames = domainNames.subList(0, config.getPriceLevel().getSearchLimit() - 1);
+
+        CompletableFuture<DynadotHttpResponse> future =
+                requester.get(getPath("bulk_search?show_price=true&currency=" + currency.toUpperCase() + "&domain_name_list=" + String.join(",", domainNames)));
+
+        return future.thenApply((response) -> {
+            return response.asJSON()
+                    .getJSONArray("domain_result_list").toList().stream()
+                    .map((obj) -> gson.fromJson(obj.toString(), DomainSearchResult.class))
+                    .collect(Collectors.toCollection(ArrayList::new));
+        });
     }
 
     /**
@@ -180,6 +228,7 @@ public class DomainClient extends Client {
 
     /**
      * Recupera os detalhes de domínio registrado.
+     *
      * @param domainName domínio a ser exibido
      * @return detalhes do domínio numa promessa
      */

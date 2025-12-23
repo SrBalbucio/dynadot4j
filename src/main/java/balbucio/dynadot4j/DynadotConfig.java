@@ -18,9 +18,11 @@ public class DynadotConfig {
     private String endpointUrl;
     private AccountPriceLevel priceLevel;
     private ScheduledExecutorService executorService;
+    private boolean debug;
 
     public static DynadotConfigBuilder createDefault() {
         return DynadotConfig.builder()
+                .debug(false)
                 .priceLevel(AccountPriceLevel.REGULAR)
                 .executorService(Executors.newSingleThreadScheduledExecutor())
                 .endpointUrl("https://api.dynadot.com");

@@ -136,7 +136,9 @@ public class DynadotRequester implements Runnable {
     public void throwFailMessage(Connection.Response response, String bodyRaw) {
 
         JSONObject body = new JSONObject(bodyRaw);
-        System.out.println(body);
+
+        if(config.isDebug()) System.out.println(body.toString());
+
         int statusCode = body.optInt("code", response.statusCode());
 
         if (statusCode == 200 || statusCode == 201 || statusCode == 202) return;
