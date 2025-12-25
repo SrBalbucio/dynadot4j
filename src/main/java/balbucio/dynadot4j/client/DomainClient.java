@@ -112,7 +112,6 @@ public class DomainClient extends Client {
      * @return resultado do registro numa promessa
      */
     public Future<DomainRegisterResult> register(DomainRegistration action) {
-
         return requester.post(getPath(action.getDomainName() + "/register"), action.toJSON().toString())
                 .thenApply((response) -> response.asClazz(gson, DomainRegisterResult.class));
     }

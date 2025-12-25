@@ -9,19 +9,31 @@ public class DynadotConvertUtils {
     }
 
     public static double priceAsDouble(String currency, String value) {
-        if (!value.contains("$")) return Double.parseDouble(value);
-        return switch (currency.toUpperCase()) {
-            case "BRL" -> Double.parseDouble(value.substring(2));
-            default -> Double.parseDouble(value.substring(1));
-        };
+        try {
+            if (value.equalsIgnoreCase("Problem getting prices")) return 0.0;
+            if (!value.contains("$")) return Double.parseDouble(value);
+            return switch (currency.toUpperCase()) {
+                case "BRL" -> Double.parseDouble(value.substring(2));
+                default -> Double.parseDouble(value.substring(1));
+            };
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
+        }
     }
 
     public static BigDecimal priceAsDecimal(String currency, String value) {
-        if (!value.contains("$")) return new BigDecimal(value);
-        return switch (currency.toUpperCase()) {
-            case "BRL" -> new BigDecimal(value.substring(2));
-            default -> new BigDecimal(value.substring(1));
-        };
+        try {
+            if (value.equalsIgnoreCase("Problem getting prices")) return BigDecimal.ZERO;
+            if (!value.contains("$")) return new BigDecimal(value);
+            return switch (currency.toUpperCase()) {
+                case "BRL" -> new BigDecimal(value.substring(2));
+                default -> new BigDecimal(value.substring(1));
+            };
+        } catch (Exception e) {
+            e.printStackTrace();
+            return BigDecimal.ZERO;
+        }
     }
 
     public static int getYearPeriod(String value) {

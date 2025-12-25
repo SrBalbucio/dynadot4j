@@ -40,6 +40,7 @@ public class DomainClientTest {
                 .endpointUrl("https://api-sandbox.dynadot.com")
                 .apiKey(apiKey)
                 .apiSecret(apiSecret)
+                .debug(true)
                 .build();
 
         this.dynadot = new Dynadot(config);
@@ -53,7 +54,7 @@ public class DomainClientTest {
     @Order(1)
     public void searchDomain() {
         assertDoesNotThrow(() -> {
-            DomainSearchResult result = domainClient.search(domainName, "USD").get();
+            DomainSearchResult result = domainClient.search(domainName, "BRL").get();
             assertNotNull(result);
 
             registered = !result.isAvailable();
