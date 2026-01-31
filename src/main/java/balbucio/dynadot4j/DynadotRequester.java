@@ -37,7 +37,7 @@ public class DynadotRequester implements Runnable {
             config.setEndpointUrl(config.getEndpointUrl() + "/");
 
         AccountPriceLevel priceLevel = config.getPriceLevel();
-        for (int i = 0; i < priceLevel.getMaxRequestPerSec(); i++) {
+        for (int i = 0; i < (priceLevel.getMaxRequestPerSec() * priceLevel.getSearchLimit()); i++) {
             this.executor.scheduleWithFixedDelay(this, 1, priceLevel.getDelay(), TimeUnit.SECONDS);
         }
     }
@@ -137,7 +137,7 @@ public class DynadotRequester implements Runnable {
 
         JSONObject body = new JSONObject(bodyRaw);
 
-        if(config.isDebug()) System.out.println(body.toString());
+        if (config.isDebug()) System.out.println(body.toString());
 
         int statusCode = body.optInt("code", response.statusCode());
 

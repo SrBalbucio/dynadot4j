@@ -7,6 +7,7 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 @Getter
 @Setter
@@ -32,6 +33,12 @@ public class DynadotAccountInfo {
     private String accountBalance;
     @SerializedName("balance_list")
     private List<Balance> balanceList;
+
+    public Optional<Balance> getBalanceByCurrency(String currency) {
+        return balanceList.stream()
+                .filter(balance -> balance.getCurrency().equalsIgnoreCase(currency))
+                .findFirst();
+    }
 
     @Getter
     @Setter
