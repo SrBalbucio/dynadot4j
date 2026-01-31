@@ -93,6 +93,7 @@ public class DynadotRequester implements Runnable {
 
                 future.complete(this.instance.getGson().fromJson(raw, DynadotHttpResponse.class));
             } catch (Exception e) {
+                e.printStackTrace();
                 future.completeExceptionally(e);
             }
         };
@@ -154,8 +155,6 @@ public class DynadotRequester implements Runnable {
     public void run() {
         Runnable runnable = this.queue.poll();
 
-        if (runnable == null) return;
-
-        runnable.run();
+        if (runnable != null) runnable.run();
     }
 }
