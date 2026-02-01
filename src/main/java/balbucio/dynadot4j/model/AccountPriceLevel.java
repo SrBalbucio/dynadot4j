@@ -7,11 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum AccountPriceLevel {
 
-    REGULAR(1, 1, 5),
-    BULK(10, 1, 10),
-    SUPERBULK(100, 1, 20);
+    REGULAR(60, 5),
+    BULK(600, 10),
+    SUPERBULK(6000, 20);
 
     private final int maxRequestPerSec;
-    private final int delay;
     private final int searchLimit;
 }

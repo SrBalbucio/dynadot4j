@@ -18,6 +18,7 @@ public class DynadotConfig {
     private String endpointUrl;
     private AccountPriceLevel priceLevel;
     private ScheduledExecutorService executorService;
+    private int requestThreads = 12;
     private boolean debug;
 
     public static DynadotConfigBuilder createDefault() {

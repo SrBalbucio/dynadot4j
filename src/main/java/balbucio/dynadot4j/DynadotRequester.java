@@ -10,13 +10,11 @@ import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -37,8 +35,8 @@ public class DynadotRequester implements Runnable {
             config.setEndpointUrl(config.getEndpointUrl() + "/");
 
         AccountPriceLevel priceLevel = config.getPriceLevel();
-        for (int i = 0; i < (priceLevel.getMaxRequestPerSec() * priceLevel.getSearchLimit()); i++) {
-            this.executor.scheduleWithFixedDelay(this, 1, priceLevel.getDelay(), TimeUnit.SECONDS);
+        for (int i = 0; i < config.getRequestThreads(); i++) {
+            this.executor.scheduleWithFixedDelay(this, 1, (priceLevel.getMaxRequestPerSec() / 1000), TimeUnit.MILLISECONDS);
         }
     }
 
