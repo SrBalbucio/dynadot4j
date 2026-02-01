@@ -26,9 +26,9 @@ public class DynadotRequester implements Runnable {
     private final ScheduledExecutorService executor;
     private final Queue<Runnable> queue = new LinkedList<>();
 
-    public DynadotRequester(Dynadot instance) {
+    public DynadotRequester(Dynadot instance, DynadotConfig config) {
         this.instance = instance;
-        this.config = instance.getConfig();
+        this.config = config;
         this.executor = config.getExecutorService();
 
         if (!config.getEndpointUrl().endsWith("/"))
@@ -36,7 +36,7 @@ public class DynadotRequester implements Runnable {
 
         AccountPriceLevel priceLevel = config.getPriceLevel();
         for (int i = 0; i < config.getRequestThreads(); i++) {
-            this.executor.scheduleWithFixedDelay(this, 1, (priceLevel.getMaxRequestPerSec() / 1000), TimeUnit.MILLISECONDS);
+            this.executor.scheduleWithFixedDelay(this, 1, (1000 / priceLevel.getMaxRequestPerSec()), TimeUnit.MILLISECONDS);
         }
     }
 

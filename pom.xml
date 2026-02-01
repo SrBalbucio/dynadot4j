@@ -6,7 +6,7 @@
 
     <groupId>balbucio.dynadot4j</groupId>
     <artifactId>dynadot4j</artifactId>
-    <version>1.0.5</version>
+    <version>1.0.6-2</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

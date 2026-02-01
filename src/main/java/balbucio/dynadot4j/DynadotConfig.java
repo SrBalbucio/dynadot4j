@@ -26,7 +26,8 @@ public class DynadotConfig {
                 .debug(false)
                 .priceLevel(AccountPriceLevel.REGULAR)
                 .executorService(Executors.newSingleThreadScheduledExecutor())
-                .endpointUrl("https://api.dynadot.com");
+                .endpointUrl("https://api.dynadot.com")
+                .requestThreads(4);
     }
 
 }

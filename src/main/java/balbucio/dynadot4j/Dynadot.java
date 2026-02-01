@@ -24,7 +24,7 @@ public class Dynadot {
         if(config.getApiKey() == null || config.getApiSecret() == null)
             throw new NullPointerException("The credentials were not entered correctly.");
 
-        this.requester = new DynadotRequester(this);
+        this.requester = new DynadotRequester(this, config);
         this.gson = new GsonBuilder()
                 .enableComplexMapKeySerialization()
                 .serializeNulls()
