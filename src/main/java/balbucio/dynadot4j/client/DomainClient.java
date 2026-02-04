@@ -240,6 +240,12 @@ public class DomainClient extends Client {
                 .thenApply((response) -> null);
     }
 
+    public Future<Void> clearDNSSEC(String domainName){
+        return requester.del(getPath(domainName + "/dnssec"))
+                .thenApply((response) -> null);
+    }
+
+
     /**
      * Defina a operação desejada na renovação (RESET, AUTO, DONOT)
      *
