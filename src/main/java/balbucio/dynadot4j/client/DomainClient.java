@@ -211,6 +211,36 @@ public class DomainClient extends Client {
     }
 
     /**
+     * Define os registros DNSSEC
+     *
+     * @param domainName domínio a ser alterado
+     * @param algorithm algoritmo
+     * @param digest digest
+     * @param digestType tipo do digest
+     * @param keyTag key tag
+     * @param publicKey public key
+     * @return promessa de conclusão
+     */
+    public Future<Void> setDNSSEC(
+            String domainName,
+            DNSSECAlgorithm algorithm,
+            String digest,
+            DigestType digestType,
+            int keyTag,
+            String publicKey
+    ) {
+        JSONObject body = new JSONObject();
+        body.put("digest", digest);
+        body.put("digest_type", digestType.getLabel());
+        body.put("key_tag", keyTag);
+        body.put("algorithm", algorithm.getLabel());
+        body.put("public_key", publicKey);
+
+        return requester.put(getPath(domainName + "/dnssec"), body.toString())
+                .thenApply((response) -> null);
+    }
+
+    /**
      * Defina a operação desejada na renovação (RESET, AUTO, DONOT)
      *
      * @param domainName domínio a ser alterado
@@ -241,6 +271,6 @@ public class DomainClient extends Client {
     }
 
     private String getPath(String additional) {
-        return "restful/v1/domains" + (additional != null ? "/" + additional : "");
+        return "restful/v2/domains" + (additional != null ? "/" + additional : "");
     }
 }

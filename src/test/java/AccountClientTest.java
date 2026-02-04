@@ -1,6 +1,7 @@
 import balbucio.dynadot4j.Dynadot;
 import balbucio.dynadot4j.DynadotConfig;
 import balbucio.dynadot4j.client.AccountClient;
+import balbucio.dynadot4j.model.AccountPriceLevel;
 import balbucio.dynadot4j.model.DynadotAccountInfo;
 import org.junit.jupiter.api.*;
 

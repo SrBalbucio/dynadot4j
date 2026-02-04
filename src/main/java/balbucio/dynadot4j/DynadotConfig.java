@@ -18,7 +18,7 @@ public class DynadotConfig {
     private String endpointUrl;
     private AccountPriceLevel priceLevel;
     private ScheduledExecutorService executorService;
-    private int requestThreads = 12;
+    private int requestThreads = 0;
     private boolean debug;
 
     public static DynadotConfigBuilder createDefault() {
@@ -27,7 +27,7 @@ public class DynadotConfig {
                 .priceLevel(AccountPriceLevel.REGULAR)
                 .executorService(Executors.newSingleThreadScheduledExecutor())
                 .endpointUrl("https://api.dynadot.com")
-                .requestThreads(4);
+                .requestThreads(0);
     }
 
 }

@@ -35,8 +35,8 @@ public class DynadotRequester implements Runnable {
             config.setEndpointUrl(config.getEndpointUrl() + "/");
 
         AccountPriceLevel priceLevel = config.getPriceLevel();
-        for (int i = 0; i < config.getRequestThreads(); i++) {
-            this.executor.scheduleWithFixedDelay(this, 1, (1000 / priceLevel.getMaxRequestPerSec()), TimeUnit.MILLISECONDS);
+        for (int i = 0; i < (priceLevel.getMaxRequestPerSec() + config.getRequestThreads()); i++) {
+            this.executor.scheduleWithFixedDelay(this, 1, 700, TimeUnit.MILLISECONDS);
         }
     }
 
