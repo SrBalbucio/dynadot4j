@@ -277,6 +277,6 @@ public class DomainClient extends Client {
     }
 
     private String getPath(String additional) {
-        return "restful/v2/domains" + (additional != null ? "/" + additional : "");
+        return "restful/v1/domains" + (additional != null ? "/" + additional : "");
     }
 }
