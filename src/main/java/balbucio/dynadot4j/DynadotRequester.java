@@ -10,6 +10,8 @@ import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -49,30 +51,50 @@ public class DynadotRequester implements Runnable {
     }
 
     private String generateSignature(String path, UUID requestId, String body) {
-        if (body == null) body = "";
+        if (path.startsWith("restful")) path = path.substring("restful".length() + 4);
 
-        String signatureBody = this.config.getApiKey() + "\n" + path + "\n" + requestId.toString() + "\n" + body;
+        StringBuilder builder = new StringBuilder();
 
-        return Hashing.hmacSha256(this.config.getApiSecret().getBytes(StandardCharsets.UTF_8))
-                .hashString(signatureBody, StandardCharsets.UTF_8)
+        builder.append(config.getApiKey().trim()).append("\n")
+                .append(path).append("\n");
+
+        if (requestId != null) {
+            builder.append(requestId);
+        }
+
+        builder.append("\n");
+
+        if (body != null) {
+            builder.append(body);
+        }
+
+        System.out.println(builder.toString());
+
+        return Hashing.hmacSha256(this.config.getApiSecret().trim().getBytes(StandardCharsets.UTF_8))
+                .hashString(builder.toString(), StandardCharsets.UTF_8)
                 .toString();
     }
 
     public Connection getConnection(String path, Connection.Method method, UUID requestId, String body) {
+        String signature = generateSignature(path, requestId, body);
+        System.out.println(signature);
+
         Connection connection = Jsoup.connect(getPath(path))
                 .method(method)
-                .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + this.config.getApiKey())
-                .header("X-Request-ID", requestId.toString())
-                .header("X-Signature", generateSignature(path, requestId, body))
+                .header("Authorization", "Bearer " + this.config.getApiKey().trim())
+                .header("X-Signature", signature)
                 .ignoreContentType(true)
                 .ignoreHttpErrors(true)
                 .followRedirects(true);
 
         if (body != null) {
+            connection.header("Content-Type", "application/json");
             connection.requestBody(body);
+        }
+
+        if (requestId != null) {
+            connection.header("X-Request-Id", requestId.toString());
         }
 
         return connection;
