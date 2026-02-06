@@ -68,8 +68,6 @@ public class DynadotRequester implements Runnable {
             builder.append(body);
         }
 
-        System.out.println(builder.toString());
-
         return Hashing.hmacSha256(this.config.getApiSecret().trim().getBytes(StandardCharsets.UTF_8))
                 .hashString(builder.toString(), StandardCharsets.UTF_8)
                 .toString();
@@ -77,7 +75,6 @@ public class DynadotRequester implements Runnable {
 
     public Connection getConnection(String path, Connection.Method method, UUID requestId, String body) {
         String signature = generateSignature(path, requestId, body);
-        System.out.println(signature);
 
         Connection connection = Jsoup.connect(getPath(path))
                 .method(method)
