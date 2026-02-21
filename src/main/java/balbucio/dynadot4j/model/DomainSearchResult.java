@@ -24,7 +24,6 @@ public class DomainSearchResult {
     private List<DomainPriceEntry> priceList;
 
     public boolean isAvailable() {
-        System.out.println(available);
         return DynadotConvertUtils.asBool(available);
     }
 
