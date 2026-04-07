@@ -60,6 +60,9 @@ public class DomainClientTest {
             registered = !result.isAvailable();
             Optional<DomainPriceEntry> oneYear = result.getPriceByYearPeriod(1);
             assertTrue(oneYear.isPresent());
+
+            System.out.println(oneYear.get().toString());
+
             assertTrue(oneYear.get().registrationPriceAsDouble() > 0.0);
             System.out.println(oneYear.get());
         });

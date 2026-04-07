@@ -38,9 +38,13 @@ public class DynadotConvertUtils {
     }
 
     public static int getYearPeriod(String value) {
-        String[] values = value.split("/")[1].split(" ");
+        String[] values = value
+                .replace("(", "")
+                .replace(")", "")
+                .split("/")[1]
+                .split(" ");
 
-        if (!values[1].trim().equalsIgnoreCase("year)"))
+        if (!values[1].trim().equalsIgnoreCase("year"))
             throw new RuntimeException("O período não é anual: " + values[1]);
 
         return Integer.parseInt(values[0]);
