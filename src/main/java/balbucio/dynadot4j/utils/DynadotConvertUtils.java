@@ -5,11 +5,12 @@ import java.math.BigDecimal;
 public class DynadotConvertUtils {
 
     public static boolean asBool(String value) {
-        return value != null && value.equalsIgnoreCase("yes");
+        return value != null && value.equalsIgnoreCase("Yes");
     }
 
     public static double priceAsDouble(String currency, String value) {
         try {
+            if (value == null) return 0.0;
             if (value.equalsIgnoreCase("Problem getting prices")) return 0.0;
             if (!value.contains("$")) return Double.parseDouble(value);
             return switch (currency.toUpperCase()) {

@@ -4,7 +4,6 @@ import balbucio.dynadot4j.exception.DynadotHttpException;
 import balbucio.dynadot4j.exception.DynadotTooManyRequestException;
 import balbucio.dynadot4j.model.AccountPriceLevel;
 import balbucio.dynadot4j.model.DynadotHttpResponse;
-import com.google.common.hash.Hashing;
 import lombok.Getter;
 import org.json.JSONObject;
 import org.jsoup.Connection;
@@ -13,6 +12,7 @@ import org.jsoup.Jsoup;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.UUID;
@@ -50,27 +50,29 @@ public class DynadotRequester implements Runnable {
         return this.config.getEndpointUrl() + path;
     }
 
+    private String getSignaturePath(String path) {
+        String parsedPath = path == null ? "" : path.trim();
+        if (!parsedPath.startsWith("/")) {
+            parsedPath = "/" + parsedPath;
+        }
+        return parsedPath;
+    }
+
     private String generateSignature(String path, UUID requestId, String body) {
-        if (path.startsWith("restful")) path = path.substring("restful".length() + 4);
+        String stringToSign = config.getApiKey().trim() + "\n"
+                + getSignaturePath(path) + "\n"
+                + (requestId != null ? requestId : "") + "\n"
+                + (body != null ? body : "");
 
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(config.getApiKey().trim()).append("\n")
-                .append(path).append("\n");
-
-        if (requestId != null) {
-            builder.append(requestId);
+        try {
+            Mac mac = Mac.getInstance("HmacSHA256");
+            SecretKeySpec key = new SecretKeySpec(this.config.getApiSecret().trim().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+            mac.init(key);
+            byte[] hash = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(hash);
+        } catch (Exception ex) {
+            throw new IllegalStateException("Failed to generate X-Signature.", ex);
         }
-
-        builder.append("\n");
-
-        if (body != null) {
-            builder.append(body);
-        }
-
-        return Hashing.hmacSha256(this.config.getApiSecret().trim().getBytes(StandardCharsets.UTF_8))
-                .hashString(builder.toString(), StandardCharsets.UTF_8)
-                .toString();
     }
 
     public Connection getConnection(String path, Connection.Method method, UUID requestId, String body) {
@@ -91,7 +93,7 @@ public class DynadotRequester implements Runnable {
         }
 
         if (requestId != null) {
-            connection.header("X-Request-Id", requestId.toString());
+            connection.header("X-Request-ID", requestId.toString());
         }
 
         return connection;

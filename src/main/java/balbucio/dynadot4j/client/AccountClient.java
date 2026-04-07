@@ -21,6 +21,6 @@ public class AccountClient extends Client {
     }
 
     private String getPath(String additional) {
-        return "restful/v1/accounts" + (additional != null ? "/" + additional : "");
+        return "restful/v2/accounts" + (additional != null ? "/" + additional : "");
     }
 }

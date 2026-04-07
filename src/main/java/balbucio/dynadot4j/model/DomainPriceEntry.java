@@ -1,6 +1,7 @@
 package balbucio.dynadot4j.model;
 
 import balbucio.dynadot4j.utils.DynadotConvertUtils;
+import com.google.gson.annotations.SerializedName;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,11 +16,15 @@ public class DomainPriceEntry {
 
     private String currency;
     private String unit;
+    @SerializedName("registration_price")
     private String registration;
+    @SerializedName("renewal_price")
     private String renewal;
     @Nullable
+    @SerializedName("transfer_price")
     private String transfer;
     @Nullable
+    @SerializedName("restore_price")
     private String restore;
 
     public int getPeriod() {

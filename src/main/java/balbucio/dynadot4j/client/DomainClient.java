@@ -4,6 +4,7 @@ import balbucio.dynadot4j.Dynadot;
 import balbucio.dynadot4j.action.DomainRegistration;
 import balbucio.dynadot4j.exception.InvalidDomainException;
 import balbucio.dynadot4j.model.*;
+import com.google.gson.JsonSyntaxException;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
@@ -12,6 +13,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -78,12 +80,17 @@ public class DomainClient extends Client {
         CompletableFuture<DynadotHttpResponse> future =
                 requester.get(getPath("bulk_search?show_price=true&currency=" + currency.toUpperCase() + "&domain_name_list=" + String.join(",", domainNames)));
 
-        return future.thenApply((response) -> {
-            return response.asJSON()
-                    .getJSONArray("domain_result_list").toList().stream()
-                    .map((obj) -> gson.fromJson(obj.toString(), DomainSearchResult.class))
-                    .collect(Collectors.toCollection(ArrayList::new));
-        });
+        return future.thenApply((response) -> response.asJSON()
+                .getJSONArray("domain_result_list").toList().stream()
+                .map((obj) -> {
+                    try {
+                        return gson.fromJson(new JSONObject(obj).toString(), DomainSearchResult.class);
+                    } catch (JsonSyntaxException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(ArrayList::new)));
     }
 
     /**
@@ -277,6 +284,6 @@ public class DomainClient extends Client {
     }
 
     private String getPath(String additional) {
-        return "restful/v1/domains" + (additional != null ? "/" + additional : "");
+        return "restful/v2/domains" + (additional != null ? "/" + additional : "");
     }
 }
