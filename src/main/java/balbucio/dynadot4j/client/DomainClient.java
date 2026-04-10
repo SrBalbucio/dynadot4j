@@ -9,11 +9,9 @@ import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -41,7 +39,7 @@ public class DomainClient extends Client {
         return future.thenApply((response) -> response.asClazz(gson, DomainSearchResult.class));
     }
 
-    public Future<List<DomainSearchResult>> searchBulk(@NonNull String domainName, @Nullable String currency) {
+    public Future<List<BulkSearchResult>> searchBulk(@NonNull String domainName, @Nullable String currency) {
         // TODO criar lista de possíveis domínios de forma menos arcaica
         String word = domainName.split("\\.")[0]; // remove o nome antigo
         return searchBulk(Arrays.asList(
@@ -69,7 +67,7 @@ public class DomainClient extends Client {
      * @param currency    moeda em que os valores devem ser retornados (USD, BRL)
      * @return resultado da pesquisa numa promessa
      */
-    public Future<List<DomainSearchResult>> searchBulk(@NonNull List<String> domainNames, @Nullable String currency) {
+    public Future<List<BulkSearchResult>> searchBulk(@NonNull List<String> domainNames, @Nullable String currency) {
         if (domainNames.isEmpty())
             throw new InvalidDomainException(domainNames);
         if (currency == null)
@@ -84,7 +82,7 @@ public class DomainClient extends Client {
                 .getJSONArray("domain_result_list").toList().stream()
                 .map((obj) -> {
                     try {
-                        return gson.fromJson(new JSONObject(obj).toString(), DomainSearchResult.class);
+                        return gson.fromJson(new JSONObject((Map<String, Object> ) obj).toString(), BulkSearchResult.class);
                     } catch (JsonSyntaxException e) {
                         return null;
                     }

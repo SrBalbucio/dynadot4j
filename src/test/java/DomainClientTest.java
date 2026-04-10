@@ -74,7 +74,8 @@ public class DomainClientTest {
     @Order(1)
     public void bulkSearchDomain() {
         assertDoesNotThrow(() -> {
-            List<DomainSearchResult> result = domainClient.searchBulk(domainName, "USD").get();
+            List<BulkSearchResult> result = domainClient.searchBulk(domainName, "USD").get();
+            System.out.println(result);
             assertNotNull(result);
             assertFalse(result.isEmpty());
         });
