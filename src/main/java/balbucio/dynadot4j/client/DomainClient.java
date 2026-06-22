@@ -11,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -82,7 +84,7 @@ public class DomainClient extends Client {
                 .getJSONArray("domain_result_list").toList().stream()
                 .map((obj) -> {
                     try {
-                        return gson.fromJson(new JSONObject((Map<String, Object> ) obj).toString(), BulkSearchResult.class);
+                        return gson.fromJson(new JSONObject((Map<String, Object>) obj).toString(), BulkSearchResult.class);
                     } catch (JsonSyntaxException e) {
                         return null;
                     }
@@ -152,6 +154,26 @@ public class DomainClient extends Client {
         return renew(domainName, duration, year, false);
     }
 
+    public Future<Long> renew(@NonNull String domainName, int duration, Date expirationDate) {
+        return renew(domainName, duration, expirationDate.getYear());
+    }
+
+    public Future<Long> renew(@NonNull String domainName, int duration, LocalDate expirationDate) {
+        return renew(domainName, duration, expirationDate.getYear());
+    }
+
+    public Future<Long> renew(@NonNull String domainName, int duration, LocalDateTime expirationDate) {
+        return renew(domainName, duration, expirationDate.getYear());
+    }
+
+    public Future<Long> renew(@NonNull String domainName, int duration, DomainInfo domainInfo) {
+        return renew(domainName, duration, domainInfo.getExpirationDate());
+    }
+
+    public Future<Long> renew(@NonNull String domainName, int duration, DomainRegisterResult fromResult) {
+        return renew(domainName, duration, fromResult.getExpirationDate());
+    }
+
     /**
      * Defina os nameservers do domínio
      *
@@ -219,11 +241,11 @@ public class DomainClient extends Client {
      * Define os registros DNSSEC
      *
      * @param domainName domínio a ser alterado
-     * @param algorithm algoritmo
-     * @param digest digest
+     * @param algorithm  algoritmo
+     * @param digest     digest
      * @param digestType tipo do digest
-     * @param keyTag key tag
-     * @param publicKey public key
+     * @param keyTag     key tag
+     * @param publicKey  public key
      * @return promessa de conclusão
      */
     public Future<Void> setDNSSEC(
@@ -245,7 +267,7 @@ public class DomainClient extends Client {
                 .thenApply((response) -> null);
     }
 
-    public Future<Void> clearDNSSEC(String domainName){
+    public Future<Void> clearDNSSEC(String domainName) {
         return requester.del(getPath(domainName + "/dnssec"))
                 .thenApply((response) -> null);
     }
@@ -275,13 +297,12 @@ public class DomainClient extends Client {
     public Future<DomainInfo> getDomain(String domainName) {
         return requester.get(getPath(domainName))
                 .thenApply((response) -> {
-                    JSONObject data = response.asJSON();
-                    JSONArray domainList = data.getJSONArray("domainInfo");
-                    return gson.fromJson(domainList.getJSONObject(0).toString(), DomainInfo.class);
+                    DomainInfoResponse domainInfoResponse = response.asClazz(gson, DomainInfoResponse.class);
+                    return domainInfoResponse.getDomainInfo();
                 });
     }
 
     private String getPath(String additional) {
-        return "restful/v1/domains" + (additional != null ? "/" + additional : "");
+        return "restful/v2/domains" + (additional != null ? "/" + additional : "");
     }
 }

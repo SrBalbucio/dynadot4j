@@ -12,21 +12,27 @@ import java.util.Date;
 public class DomainInfo {
 
     @Getter
+    @SerializedName("domain_name")
     private String domainName;
+    @SerializedName("expiration_date")
     private Long expiration;
+    @SerializedName("registration_date")
     private Long registration;
+    @SerializedName("glue_info")
     private GlueInfo glueInfo;
-    @SerializedName("registrant_contactId")
+    @SerializedName("registrant_contact_id")
     private int registrantContactId;
-    @SerializedName("admin_contactId")
+    @SerializedName("admin_contact_id")
     private int adminContactId;
-    @SerializedName("tech_contactId")
+    @SerializedName("technical_contact_id")
     private int techContactId;
-    @SerializedName("billing_contactId")
+    @SerializedName("billing_contact_id")
     private int billingContactId;
     private String locked;
     private String disabled;
+    @SerializedName("udrp_locked")
     private String udrpLocked;
+    @SerializedName("registrant_unverified")
     private String registrantUnverified;
     private String hold;
     private String privacy;
@@ -41,6 +47,8 @@ public class DomainInfo {
     @SerializedName("folder_name")
     private String folderName;
     private String status;
+    @SerializedName("transfer_lock_end_date")
+    private long transferLockEndDate;
 
     public boolean isLocked() {
         return DynadotConvertUtils.asBool(locked);
@@ -82,6 +90,12 @@ public class DomainInfo {
     public static class GlueInfo {
         @SerializedName("name_server_settings")
         private NameServerSettings nameServerSettings;
+        @SerializedName("glue_type")
+        private String glueType;
+        @SerializedName("forward_to")
+        private String forwardTo;
+        @SerializedName("forward_type")
+        private String forwardType;
     }
 
     @ToString

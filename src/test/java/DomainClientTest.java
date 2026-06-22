@@ -93,13 +93,15 @@ public class DomainClientTest {
         });
     }
 
+    private DomainRegisterResult registeredDomain;
+
     @Test
     @DisplayName("Register Domain")
     @Order(3)
     public void registerDomain() {
         assertDoesNotThrow(() -> {
             if (!registered) {
-                DomainRegisterResult result = domainClient.register(DomainRegistration.create(domainName)
+                registeredDomain = domainClient.register(DomainRegistration.create(domainName)
                         .withContact(RegistrantContact.builder()
                                 .name("Aleskib")
                                 .email("example@email.com")
@@ -117,8 +119,8 @@ public class DomainClientTest {
                         .addNS("ns2.example.com")
                         .withPrivacy(DomainPrivacy.FULL)
                 ).get();
-                assertNotNull(result);
-                System.out.println(result);
+                assertNotNull(registeredDomain);
+                System.out.println(registeredDomain);
             }
         });
     }
@@ -131,7 +133,7 @@ public class DomainClientTest {
     public void renewDomain() {
         assertDoesNotThrow(() -> {
             if (!registered) {
-                Long result = domainClient.renew(domainName, 1, 2026).get();
+                Long result = domainClient.renew(domainName, 1, registeredDomain).get();
                 assertTrue(result > 0);
                 System.out.println(result);
 

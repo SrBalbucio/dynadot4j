@@ -16,11 +16,15 @@ public class DomainPriceEntry {
 
     private String currency;
     private String unit;
+    @SerializedName("registration_price")
     private String registration;
+    @SerializedName("renewal_price")
     private String renewal;
+    @SerializedName("transfer_price")
     @Nullable
     private String transfer;
     @Nullable
+    @SerializedName("restore_price")
     private String restore;
 
     public int getPeriod() {
