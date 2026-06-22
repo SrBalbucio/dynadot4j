@@ -41,6 +41,6 @@ public class ContactClient extends Client {
     }
 
     private String getPath(String additional) {
-        return "restful/v1/contacts" + (additional != null ? "/" + additional : "");
+        return "restful/v2/contacts" + (additional != null ? "/" + additional : "");
     }
 }
