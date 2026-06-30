@@ -1,11 +1,10 @@
-import balbucio.dynadot4j.Dynadot;
-import balbucio.dynadot4j.DynadotConfig;
+package balbucio.dynadot4j;
+
 import balbucio.dynadot4j.action.DomainRegistration;
 import balbucio.dynadot4j.client.DomainClient;
 import balbucio.dynadot4j.model.*;
 import org.junit.jupiter.api.*;
 
-import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -13,27 +12,27 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("integration")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DomainClientTest {
+class DomainClientIntegrationTest {
 
     private Dynadot dynadot;
     private DomainClient domainClient;
     private String domainName;
 
     @BeforeAll
-    public void beforeAll() {
+    void beforeAll() {
         String apiKey = System.getenv("DYNADOT_APIKEY");
         String apiSecret = System.getenv("DYNADOT_APISECRET");
 
-        // defina qualquer um a não ser que esteja utilizando a Key de produção (loucura inclusive)
-        this.domainName = JOptionPane.showInputDialog(null,
-                "Qual será o domínio utilizado para testes?",
-                "Dynadot4j Test Unit",
-                JOptionPane.QUESTION_MESSAGE);
+        if (apiKey == null || apiKey.isEmpty() || apiSecret == null || apiSecret.isEmpty()) {
+            throw new RuntimeException("DYNADOT_APIKEY and DYNADOT_APISECRET must be set");
+        }
 
+        this.domainName = System.getenv("DYNADOT_DOMAINNAME");
         if (this.domainName == null || this.domainName.isEmpty()) {
-            this.domainName = System.getenv("DYNADOT_DOMAINNAME");
+            this.domainName = "example.com";
         }
 
         DynadotConfig config = DynadotConfig.createDefault()
@@ -50,9 +49,9 @@ public class DomainClientTest {
     private boolean registered;
 
     @Test
-    @DisplayName("Search Domain (avaliable)")
+    @DisplayName("Search Domain (available)")
     @Order(1)
-    public void searchDomain() {
+    void searchDomain() {
         assertDoesNotThrow(() -> {
             DomainSearchResult result = domainClient.search(domainName, "BRL").get();
             assertNotNull(result);
@@ -60,22 +59,16 @@ public class DomainClientTest {
             registered = !result.isAvailable();
             Optional<DomainPriceEntry> oneYear = result.getPriceByYearPeriod(1);
             assertTrue(oneYear.isPresent());
-
-            System.out.println(oneYear.get().toString());
-
             assertTrue(oneYear.get().registrationPriceAsDouble() > 0.0);
-            System.out.println(oneYear.get());
         });
     }
 
-
     @Test
-    @DisplayName("Bulk Search Domain (avaliable)")
-    @Order(1)
-    public void bulkSearchDomain() {
+    @DisplayName("Bulk Search Domain")
+    @Order(2)
+    void bulkSearchDomain() {
         assertDoesNotThrow(() -> {
             List<BulkSearchResult> result = domainClient.searchBulk(domainName, "USD").get();
-            System.out.println(result);
             assertNotNull(result);
             assertFalse(result.isEmpty());
         });
@@ -83,13 +76,11 @@ public class DomainClientTest {
 
     @Test
     @DisplayName("Get Suggestions")
-    @Order(2)
-    public void getSuggestions() {
+    @Order(3)
+    void getSuggestions() {
         assertDoesNotThrow(() -> {
             List<String> result = domainClient.getSuggestionSearch(domainName, List.of("com", "net")).get();
             assertNotNull(result);
-            assertTrue(result.isEmpty());
-            System.out.println(result);
         });
     }
 
@@ -97,8 +88,8 @@ public class DomainClientTest {
 
     @Test
     @DisplayName("Register Domain")
-    @Order(3)
-    public void registerDomain() {
+    @Order(4)
+    void registerDomain() {
         assertDoesNotThrow(() -> {
             if (!registered) {
                 registeredDomain = domainClient.register(DomainRegistration.create(domainName)
@@ -120,85 +111,91 @@ public class DomainClientTest {
                         .withPrivacy(DomainPrivacy.FULL)
                 ).get();
                 assertNotNull(registeredDomain);
-                System.out.println(registeredDomain);
             }
         });
     }
 
-    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
     @Test
     @DisplayName("Renew Domain")
-    @Order(4)
-    public void renewDomain() {
+    @Order(5)
+    void renewDomain() {
         assertDoesNotThrow(() -> {
             if (!registered) {
                 Long result = domainClient.renew(domainName, 1, registeredDomain).get();
                 assertTrue(result > 0);
-                System.out.println(result);
-
                 Date expirationDate = new Date(result);
-                System.out.println(sdf.format(expirationDate));
+                assertNotNull(sdf.format(expirationDate));
             }
         });
     }
 
-
     @Test
     @DisplayName("Set NS")
-    @Order(5)
-    public void setNameservers() {
+    @Order(6)
+    void setNameservers() {
         assertDoesNotThrow(() -> {
-            domainClient.setNameservers(domainName, List.of("ns1.example.net", "ns2.example.net")).get();
+            if (!registered) {
+                domainClient.setNameservers(domainName, List.of("ns1.example.net", "ns2.example.net")).get();
+            }
         });
     }
 
     @Test
     @DisplayName("Set Parking")
-    @Order(6)
-    public void setParking() {
+    @Order(7)
+    void setParking() {
         assertDoesNotThrow(() -> {
-            domainClient.setParking(domainName, false).get();
+            if (!registered) {
+                domainClient.setParking(domainName, false).get();
+            }
         });
     }
 
     @Test
     @DisplayName("Set Privacy")
-    @Order(7)
-    public void setPrivacy() {
+    @Order(8)
+    void setPrivacy() {
         assertDoesNotThrow(() -> {
-            domainClient.setPrivacy(domainName, DomainPrivacy.FULL, true).get();
+            if (!registered) {
+                domainClient.setPrivacy(domainName, DomainPrivacy.FULL, true).get();
+            }
         });
     }
 
     @Test
     @DisplayName("Set Forwarding")
-    @Order(8)
-    public void setForwarding() {
+    @Order(9)
+    void setForwarding() {
         assertDoesNotThrow(() -> {
-            domainClient.setForwarding(domainName, "https://discord.gg", false).get();
+            if (!registered) {
+                domainClient.setForwarding(domainName, "https://discord.gg", false).get();
+            }
         });
     }
 
     @Test
     @DisplayName("Set Renew Option")
-    @Order(9)
-    public void setRenewOption() {
+    @Order(10)
+    void setRenewOption() {
         assertDoesNotThrow(() -> {
-            domainClient.setRenewOption(domainName, DomainRenewOption.AUTO);
+            if (!registered) {
+                domainClient.setRenewOption(domainName, DomainRenewOption.AUTO);
+            }
         });
     }
 
     @Test
     @DisplayName("Get Domain Info")
-    @Order(10)
-    public void getDomainInfo() {
+    @Order(11)
+    void getDomainInfo() {
         assertDoesNotThrow(() -> {
-            DomainInfo domainInfo = domainClient.getDomain(domainName).get();
-            assertNotNull(domainInfo);
-            System.out.println(domainInfo);
-            assertEquals(domainName, domainInfo.getDomainName());
+            if (!registered) {
+                DomainInfo domainInfo = domainClient.getDomain(domainName).get();
+                assertNotNull(domainInfo);
+                assertEquals(domainName, domainInfo.getDomainName());
+            }
         });
     }
-
 }

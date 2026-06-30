@@ -1,24 +1,27 @@
-import balbucio.dynadot4j.Dynadot;
-import balbucio.dynadot4j.DynadotConfig;
+package balbucio.dynadot4j;
+
 import balbucio.dynadot4j.client.AccountClient;
 import balbucio.dynadot4j.model.DynadotAccountInfo;
 import org.junit.jupiter.api.*;
 
-import javax.swing.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("integration")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AccountClientTest {
+class AccountClientIntegrationTest {
 
     private Dynadot dynadot;
     private AccountClient accountClient;
 
     @BeforeAll
-    public void beforeAll() {
+    void beforeAll() {
         String apiKey = System.getenv("DYNADOT_APIKEY");
         String apiSecret = System.getenv("DYNADOT_APISECRET");
+
+        if (apiKey == null || apiKey.isEmpty() || apiSecret == null || apiSecret.isEmpty()) {
+            throw new RuntimeException("DYNADOT_APIKEY and DYNADOT_APISECRET environment variables must be set");
+        }
 
         DynadotConfig config = DynadotConfig.createDefault()
                 .endpointUrl("https://api-sandbox.dynadot.com")
@@ -33,13 +36,10 @@ public class AccountClientTest {
     @Test
     @DisplayName("Get Account Info")
     @Order(1)
-    public void getAccountIndo() {
+    void getAccountInfo() {
         assertDoesNotThrow(() -> {
             DynadotAccountInfo accountInfo = accountClient.getAccountInfo().get();
-
             assertNotNull(accountInfo);
-            System.out.println(accountInfo);
         });
     }
-
 }
