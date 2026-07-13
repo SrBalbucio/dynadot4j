@@ -11,7 +11,7 @@ class DynadotConfigTest {
 
     @Test
     void createDefaultShouldSetDefaults() {
-        DynadotConfig config = DynadotConfig.createDefault()
+        DynadotConfig config = Dynadot.createDefault()
                 .apiKey("key")
                 .apiSecret("secret")
                 .build();

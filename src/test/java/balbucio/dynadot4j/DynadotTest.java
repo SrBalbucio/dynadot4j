@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DynadotTest {
 
     private Dynadot createDynadot() {
-        DynadotConfig config = DynadotConfig.createDefault()
+        DynadotConfig config = Dynadot.createDefault()
                 .apiKey("test-key")
                 .apiSecret("test-secret")
                 .endpointUrl("https://api.dynadot.com")
@@ -21,7 +21,7 @@ class DynadotTest {
 
     @Test
     void constructorShouldThrowWhenApiKeyIsNull() {
-        DynadotConfig config = DynadotConfig.createDefault()
+        DynadotConfig config = Dynadot.createDefault()
                 .apiKey(null)
                 .apiSecret("secret")
                 .build();
@@ -30,7 +30,7 @@ class DynadotTest {
 
     @Test
     void constructorShouldThrowWhenApiSecretIsNull() {
-        DynadotConfig config = DynadotConfig.createDefault()
+        DynadotConfig config = Dynadot.createDefault()
                 .apiKey("key")
                 .apiSecret(null)
                 .build();
@@ -39,7 +39,7 @@ class DynadotTest {
 
     @Test
     void constructorShouldThrowWhenBothAreNull() {
-        DynadotConfig config = DynadotConfig.createDefault()
+        DynadotConfig config = Dynadot.createDefault()
                 .apiKey(null)
                 .apiSecret(null)
                 .build();

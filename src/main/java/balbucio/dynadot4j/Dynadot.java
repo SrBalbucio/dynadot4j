@@ -4,9 +4,12 @@ import balbucio.dynadot4j.client.AccountClient;
 import balbucio.dynadot4j.client.ContactClient;
 import balbucio.dynadot4j.client.DomainClient;
 import balbucio.dynadot4j.client.OrderClient;
+import balbucio.dynadot4j.model.AccountPriceLevel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
+
+import java.util.concurrent.Executors;
 
 @Getter
 public class Dynadot {
@@ -36,5 +39,14 @@ public class Dynadot {
         this.contactClient = new ContactClient(this);
         this.accountClient = new AccountClient(this);
         this.orderClient = new OrderClient(this);
+    }
+
+    public static DynadotConfig.DynadotConfigBuilder createDefault() {
+        return DynadotConfig.builder()
+                .debug(false)
+                .priceLevel(AccountPriceLevel.REGULAR)
+                .executorService(Executors.newSingleThreadScheduledExecutor())
+                .endpointUrl("https://api.dynadot.com")
+                .requestThreads(0);
     }
 }

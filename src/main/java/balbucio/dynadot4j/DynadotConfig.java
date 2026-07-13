@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Getter
@@ -21,14 +20,5 @@ public class DynadotConfig {
     @Builder.Default
     private int requestThreads = 0;
     private boolean debug;
-
-    public static DynadotConfigBuilder createDefault() {
-        return DynadotConfig.builder()
-                .debug(false)
-                .priceLevel(AccountPriceLevel.REGULAR)
-                .executorService(Executors.newSingleThreadScheduledExecutor())
-                .endpointUrl("https://api.dynadot.com")
-                .requestThreads(0);
-    }
 
 }

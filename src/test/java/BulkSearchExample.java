@@ -21,7 +21,7 @@ public class BulkSearchExample {
             domainName = System.getenv("DYNADOT_DOMAINNAME");
         }
 
-        DynadotConfig config = DynadotConfig.createDefault()
+        DynadotConfig config = Dynadot.createDefault()
                 .endpointUrl("https://api-sandbox.dynadot.com")
                 .apiKey(apiKey)
                 .apiSecret(apiSecret)

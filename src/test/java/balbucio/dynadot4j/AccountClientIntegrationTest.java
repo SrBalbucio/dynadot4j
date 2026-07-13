@@ -23,7 +23,7 @@ class AccountClientIntegrationTest {
             throw new RuntimeException("DYNADOT_APIKEY and DYNADOT_APISECRET environment variables must be set");
         }
 
-        DynadotConfig config = DynadotConfig.createDefault()
+        DynadotConfig config = Dynadot.createDefault()
                 .endpointUrl("https://api-sandbox.dynadot.com")
                 .apiKey(apiKey)
                 .apiSecret(apiSecret)

@@ -35,7 +35,7 @@ class DomainClientIntegrationTest {
             this.domainName = "example.com";
         }
 
-        DynadotConfig config = DynadotConfig.createDefault()
+        DynadotConfig config = Dynadot.createDefault()
                 .endpointUrl("https://api-sandbox.dynadot.com")
                 .apiKey(apiKey)
                 .apiSecret(apiSecret)

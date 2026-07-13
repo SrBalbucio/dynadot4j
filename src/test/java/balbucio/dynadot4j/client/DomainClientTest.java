@@ -45,7 +45,7 @@ class DomainClientTest {
     @BeforeEach
     void setUp() {
         gson = new Gson();
-        DynadotConfig config = DynadotConfig.createDefault()
+        DynadotConfig config = Dynadot.createDefault()
                 .apiKey("key")
                 .apiSecret("secret")
                 .priceLevel(AccountPriceLevel.REGULAR)
