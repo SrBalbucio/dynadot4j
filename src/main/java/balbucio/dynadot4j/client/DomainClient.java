@@ -2,6 +2,7 @@ package balbucio.dynadot4j.client;
 
 import balbucio.dynadot4j.Dynadot;
 import balbucio.dynadot4j.action.DomainRegistration;
+import balbucio.dynadot4j.action.DomainTransfer;
 import balbucio.dynadot4j.exception.InvalidDomainException;
 import balbucio.dynadot4j.model.*;
 import com.google.gson.JsonSyntaxException;
@@ -300,6 +301,78 @@ public class DomainClient extends Client {
                     DomainInfoResponse domainInfoResponse = response.asClazz(gson, DomainInfoResponse.class);
                     return domainInfoResponse.getDomainInfo();
                 });
+    }
+
+    public Future<DomainTransferResult> transferIn(DomainTransfer action) {
+        return requester.post(getPath(action.getDomainName() + "/transfer_in"), action.toJSON().toString())
+                .thenApply(response -> response.asClazz(gson, DomainTransferResult.class));
+    }
+
+    public Future<TransferStatusResponse> getTransferStatus(String domainName, String transferType) {
+        return requester.get(getPath(domainName + "/transfer_status?transfer_type=" + transferType))
+                .thenApply(response -> response.asClazz(gson, TransferStatusResponse.class));
+    }
+
+    public Future<String> getTransferAuthCode(String domainName) {
+        return requester.get(getPath(domainName + "/transfer_auth_code"))
+                .thenApply(response -> response.asJSON().getString("auth_code"));
+    }
+
+    public Future<Void> push(String domainName, String receiverPushUsername) {
+        JSONObject body = new JSONObject();
+        body.put("receiver_push_username", receiverPushUsername);
+        return requester.post(getPath(domainName + "/push"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> push(String domainName, String receiverPushUsername, boolean unlockDomainForPush) {
+        JSONObject body = new JSONObject();
+        body.put("receiver_push_username", receiverPushUsername);
+        body.put("unlock_domain_for_push", unlockDomainForPush);
+        return requester.post(getPath(domainName + "/push"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> push(String domainName, String receiverPushUsername, boolean unlockDomainForPush, String currency) {
+        JSONObject body = new JSONObject();
+        body.put("receiver_push_username", receiverPushUsername);
+        body.put("unlock_domain_for_push", unlockDomainForPush);
+        body.put("currency", currency);
+        return requester.post(getPath(domainName + "/push"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> acceptPush(String domainName) {
+        JSONObject body = new JSONObject();
+        body.put("domain_name", domainName);
+        body.put("action", "accept");
+        return requester.post(getPath("push/accept"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> declinePush(String domainName) {
+        JSONObject body = new JSONObject();
+        body.put("domain_name", domainName);
+        body.put("action", "decline");
+        return requester.post(getPath("push/accept"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<List<String>> getPendingPushRequests() {
+        return requester.get(getPath("push/pending"))
+                .thenApply(response ->
+                        response.asJSON().getJSONArray("push_domain_name")
+                                .toList().stream()
+                                .map(obj -> (String) obj)
+                                .collect(Collectors.toCollection(ArrayList::new)));
+    }
+
+    public Future<Void> authorizeTransferAway(String domainName, String orderId, boolean approve) {
+        JSONObject body = new JSONObject();
+        body.put("order_id", orderId);
+        body.put("authorize", approve ? "approve" : "deny");
+        return requester.post(getPath(domainName + "/authorize_transfer_away"), body.toString())
+                .thenApply(response -> null);
     }
 
     private String getPath(String additional) {

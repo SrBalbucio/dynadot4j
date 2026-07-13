@@ -4,6 +4,7 @@ import balbucio.dynadot4j.Dynadot;
 import balbucio.dynadot4j.DynadotConfig;
 import balbucio.dynadot4j.DynadotRequester;
 import balbucio.dynadot4j.action.DomainRegistration;
+import balbucio.dynadot4j.action.DomainTransfer;
 import balbucio.dynadot4j.exception.InvalidDomainException;
 import balbucio.dynadot4j.model.*;
 import com.google.gson.Gson;
@@ -345,5 +346,149 @@ class DomainClientTest {
         verify(requester).get(pathCaptor.capture());
         String path = pathCaptor.getValue();
         assertTrue(path.contains("domain_name_list="));
+    }
+
+    @Test
+    void transferInShouldPostCorrectPathAndReturnResult() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"domain_name":"example.com","expiration_date":1767225600000,"order_id":"1234567"}}
+                """, DynadotHttpResponse.class);
+        when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        DomainTransfer action = DomainTransfer.create("example.com")
+                .withAuthCode("testauth")
+                .withDuration(1)
+                .withCurrency("USD");
+
+        DomainTransferResult result = client.transferIn(action).get();
+
+        assertEquals("example.com", result.getDomainName());
+        assertEquals("1234567", result.getOrderId());
+        verify(requester).post(eq("restful/v2/domains/example.com/transfer_in"), anyString());
+    }
+
+    @Test
+    void getTransferStatusShouldGetCorrectPath() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"transfer_list":[{"order_id":"123","transfer_status":"waiting"}]}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        TransferStatusResponse result = client.getTransferStatus("example.com", "in").get();
+
+        assertNotNull(result);
+        assertEquals(1, result.getTransferList().size());
+        assertEquals("123", result.getTransferList().get(0).getOrderId());
+        assertEquals("waiting", result.getTransferList().get(0).getTransferStatus());
+        verify(requester).get("restful/v2/domains/example.com/transfer_status?transfer_type=in");
+    }
+
+    @Test
+    void getTransferAuthCodeShouldReturnCode() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"auth_code":"e478582Zu663762"}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        String authCode = client.getTransferAuthCode("example.com").get();
+
+        assertEquals("e478582Zu663762", authCode);
+        verify(requester).get("restful/v2/domains/example.com/transfer_auth_code");
+    }
+
+    @Test
+    void pushShouldPostCorrectPath() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.push("example.com", "receiver_user").get();
+
+        verify(requester).post(eq("restful/v2/domains/example.com/push"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"receiver_push_username\":\"receiver_user\""));
+    }
+
+    @Test
+    void pushWithUnlockShouldIncludeUnlockFlag() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.push("example.com", "receiver_user", true).get();
+
+        verify(requester).post(anyString(), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"unlock_domain_for_push\":true"));
+    }
+
+    @Test
+    void acceptPushShouldPostCorrectPath() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.acceptPush("example.com").get();
+
+        verify(requester).post(eq("restful/v2/domains/push/accept"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"domain_name\":\"example.com\""));
+        assertTrue(bodyCaptor.getValue().contains("\"action\":\"accept\""));
+    }
+
+    @Test
+    void declinePushShouldPostCorrectPath() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.declinePush("example.com").get();
+
+        verify(requester).post(eq("restful/v2/domains/push/accept"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"domain_name\":\"example.com\""));
+        assertTrue(bodyCaptor.getValue().contains("\"action\":\"decline\""));
+    }
+
+    @Test
+    void getPendingPushRequestsShouldReturnList() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"push_domain_name":["haha.com","haha1.com"]}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        List<String> pending = client.getPendingPushRequests().get();
+
+        assertNotNull(pending);
+        assertEquals(2, pending.size());
+        assertTrue(pending.contains("haha.com"));
+        verify(requester).get("restful/v2/domains/push/pending");
+    }
+
+    @Test
+    void authorizeTransferAwayShouldPostCorrectPath() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.authorizeTransferAway("example.com", "order123", true).get();
+
+        verify(requester).post(eq("restful/v2/domains/example.com/authorize_transfer_away"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"order_id\":\"order123\""));
+        assertTrue(bodyCaptor.getValue().contains("\"authorize\":\"approve\""));
+    }
+
+    @Test
+    void authorizeTransferAwayDenyShouldPostDenyAction() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.authorizeTransferAway("example.com", "order123", false).get();
+
+        verify(requester).post(anyString(), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"authorize\":\"deny\""));
     }
 }
