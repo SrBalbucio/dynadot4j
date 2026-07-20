@@ -55,6 +55,6 @@ public class DynadotConvertUtils {
     }
 
     public static String toOptBool(boolean bool) {
-        return bool ? "true" : "false";
+        return Boolean.toString(bool);
     }
 }

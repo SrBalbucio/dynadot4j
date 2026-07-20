@@ -12,6 +12,7 @@ import org.jsoup.Jsoup;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -27,14 +28,23 @@ public class DynadotRequester implements Runnable {
     private final Dynadot instance;
     private final ScheduledExecutorService executor;
     private final Queue<Runnable> queue = new LinkedList<>();
+    private final SecretKeySpec key;
+    private final Mac mac;
 
-    public DynadotRequester(Dynadot instance, DynadotConfig config) {
+    public DynadotRequester(Dynadot instance, DynadotConfig config) throws NoSuchAlgorithmException {
         this.instance = instance;
         this.config = config;
         this.executor = config.getExecutorService();
 
         if (!config.getEndpointUrl().endsWith("/"))
             config.setEndpointUrl(config.getEndpointUrl() + "/");
+
+        try {
+            mac = Mac.getInstance("HmacSHA256");
+            key = new SecretKeySpec(this.config.getApiSecret().trim().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
 
         AccountPriceLevel priceLevel = config.getPriceLevel();
         for (int i = 0; i < (priceLevel.getMaxRequestPerSec() + config.getRequestThreads()); i++) {
@@ -65,8 +75,6 @@ public class DynadotRequester implements Runnable {
                 + (body != null ? body : "");
 
         try {
-            Mac mac = Mac.getInstance("HmacSHA256");
-            SecretKeySpec key = new SecretKeySpec(this.config.getApiSecret().trim().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
             mac.init(key);
             byte[] hash = mac.doFinal(stringToSign.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hash);
