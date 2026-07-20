@@ -31,7 +31,7 @@ public class DynadotRequester implements Runnable {
     private final SecretKeySpec key;
     private final Mac mac;
 
-    public DynadotRequester(Dynadot instance, DynadotConfig config) throws NoSuchAlgorithmException {
+    public DynadotRequester(Dynadot instance, DynadotConfig config) {
         this.instance = instance;
         this.config = config;
         this.executor = config.getExecutorService();
