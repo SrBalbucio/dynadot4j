@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -26,6 +28,9 @@ class ContactClientTest {
 
     @Mock
     private DynadotRequester requester;
+
+    @Captor
+    private ArgumentCaptor<String> bodyCaptor;
 
     private Gson gson;
     private ContactClient client;
@@ -109,5 +114,18 @@ class ContactClientTest {
         when(requester.del(anyString())).thenReturn(CompletableFuture.failedFuture(new RuntimeException("API error")));
 
         assertThrows(Exception.class, () -> client.deleteContact(1).get());
+    }
+
+    @Test
+    void setResellerContactWhoisVerificationStatusShouldPutCorrectPathAndBody() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.put(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.setResellerContactWhoisVerificationStatus(42, "verified").get();
+
+        verify(requester).put(eq("restful/v2/contacts/42/reseller/whois-verification-status"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"status\":\"verified\""));
     }
 }

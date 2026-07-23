@@ -375,6 +375,36 @@ public class DomainClient extends Client {
                 .thenApply(response -> null);
     }
 
+    public Future<ResellerHoldStatus> getResellerHoldStatus(String domainName) {
+        return requester.get(getPath(domainName + "/reseller/hold/status"))
+                .thenApply(response -> {
+                    ResellerHoldStatusResponse r = response.asClazz(gson, ResellerHoldStatusResponse.class);
+                    return r.getStatus();
+                });
+    }
+
+    public Future<Void> setResellerHoldStatus(String domainName, ResellerHoldStatus status) {
+        JSONObject body = new JSONObject();
+        body.put("hold", status.getLabel());
+        return requester.put(getPath(domainName + "/reseller/hold/status"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Long> getResellerCustomerId(String domainName) {
+        return requester.get(getPath(domainName + "/reseller/customer-id"))
+                .thenApply(response -> {
+                    ResellerCustomerIdResponse r = response.asClazz(gson, ResellerCustomerIdResponse.class);
+                    return r.getCustomerId();
+                });
+    }
+
+    public Future<Void> setResellerCustomerId(String domainName, long customerId) {
+        JSONObject body = new JSONObject();
+        body.put("customer_id", customerId);
+        return requester.put(getPath(domainName + "/reseller/customer-id"), body.toString())
+                .thenApply(response -> null);
+    }
+
     private String getPath(String additional) {
         return "restful/v2/domains" + (additional != null ? "/" + additional : "");
     }

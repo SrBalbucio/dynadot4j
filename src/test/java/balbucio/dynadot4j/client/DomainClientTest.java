@@ -491,4 +491,68 @@ class DomainClientTest {
         verify(requester).post(anyString(), bodyCaptor.capture());
         assertTrue(bodyCaptor.getValue().contains("\"authorize\":\"deny\""));
     }
+
+    @Test
+    void getResellerHoldStatusShouldGetCorrectPath() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"hold":"yes"}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        ResellerHoldStatus result = client.getResellerHoldStatus("example.com").get();
+
+        assertEquals(ResellerHoldStatus.ON, result);
+        verify(requester).get("restful/v2/domains/example.com/reseller/hold/status");
+    }
+
+    @Test
+    void getResellerHoldStatusShouldReturnOffForNo() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"hold":"no"}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        ResellerHoldStatus result = client.getResellerHoldStatus("example.com").get();
+
+        assertEquals(ResellerHoldStatus.OFF, result);
+    }
+
+    @Test
+    void setResellerHoldStatusShouldPutCorrectPathAndBody() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.put(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.setResellerHoldStatus("example.com", ResellerHoldStatus.ON).get();
+
+        verify(requester).put(eq("restful/v2/domains/example.com/reseller/hold/status"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"hold\":\"on\""));
+    }
+
+    @Test
+    void getResellerCustomerIdShouldGetCorrectPath() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"customer_id":12345}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        long result = client.getResellerCustomerId("example.com").get();
+
+        assertEquals(12345L, result);
+        verify(requester).get("restful/v2/domains/example.com/reseller/customer-id");
+    }
+
+    @Test
+    void setResellerCustomerIdShouldPutCorrectPathAndBody() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.put(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.setResellerCustomerId("example.com", 67890L).get();
+
+        verify(requester).put(eq("restful/v2/domains/example.com/reseller/customer-id"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"customer_id\":67890"));
+    }
 }

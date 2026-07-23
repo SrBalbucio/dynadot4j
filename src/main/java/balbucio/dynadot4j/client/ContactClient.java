@@ -3,6 +3,7 @@ package balbucio.dynadot4j.client;
 import balbucio.dynadot4j.Dynadot;
 import balbucio.dynadot4j.model.RegistrantContact;
 import lombok.Getter;
+import org.json.JSONObject;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -38,6 +39,13 @@ public class ContactClient extends Client {
             future.complete(null);
         });
         return future;
+    }
+
+    public Future<Void> setResellerContactWhoisVerificationStatus(int contactId, String status) {
+        JSONObject body = new JSONObject();
+        body.put("status", status);
+        return requester.put(getPath(contactId + "/reseller/whois-verification-status"), body.toString())
+                .thenApply(response -> null);
     }
 
     private String getPath(String additional) {
