@@ -476,8 +476,19 @@ public class DomainClient extends Client {
                 .thenApply(response -> response.asClazz(gson, DomainAppraisalResponse.class).getAppraisalPrice());
     }
 
-    public Future<JSONObject> getTldPrice(@Nullable String tld, @Nullable String currency, @Nullable String priceLevel,
-                                           @Nullable String sort, int page, int pageSize) {
+    /**
+     * Recupera os preços de TLDs (Top-Level Domains).
+     *
+     * @param tld         extensão de domínio desejada (ex.: com, net)
+     * @param currency    moeda em que os valores devem ser retornados (USD, BRL)
+     * @param priceLevel  nível de preço da conta (Regular, Bulk, Super Bulk)
+     * @param sort        campo para ordenação
+     * @param page        página dos resultados
+     * @param pageSize    quantidade de resultados por página
+     * @return lista de preços de TLDs numa promessa
+     */
+    public Future<List<TldPriceEntry>> getTldPrice(@Nullable String tld, @Nullable String currency, @Nullable String priceLevel,
+                                            @Nullable String sort, int page, int pageSize) {
         List<String> params = new ArrayList<>();
         params.add("page=" + page);
         params.add("page_size=" + pageSize);
@@ -486,7 +497,17 @@ public class DomainClient extends Client {
         if (priceLevel != null) params.add("price_level=" + priceLevel);
         if (sort != null) params.add("sort=" + sort);
         return requester.get(getPath("get_tld_price?" + String.join("&", params)))
-                .thenApply(response -> response.asJSON());
+                .thenApply(response -> response.asJSON()
+                        .getJSONArray("tld_price_list").toList().stream()
+                        .map(obj -> {
+                            try {
+                                return gson.fromJson(new JSONObject((Map<String, Object>) obj).toString(), TldPriceEntry.class);
+                            } catch (JsonSyntaxException e) {
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toCollection(ArrayList::new)));
     }
 
     public Future<Void> graceDelete(String domainName, boolean addToWaitingList) {

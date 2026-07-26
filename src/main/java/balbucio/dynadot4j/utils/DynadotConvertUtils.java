@@ -25,6 +25,7 @@ public class DynadotConvertUtils {
 
     public static BigDecimal priceAsDecimal(String currency, String value) {
         try {
+            if (value == null) return BigDecimal.ZERO;
             if (value.equalsIgnoreCase("Problem getting prices")) return BigDecimal.ZERO;
             if (!value.contains("$")) return new BigDecimal(value);
             return switch (currency.toUpperCase()) {
