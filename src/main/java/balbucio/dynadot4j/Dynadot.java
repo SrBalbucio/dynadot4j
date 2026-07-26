@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.Executors;
 
 @Getter
@@ -23,7 +24,7 @@ public class Dynadot {
     private final AccountClient accountClient;
     private final OrderClient orderClient;
 
-    public Dynadot(DynadotConfig config) {
+    public Dynadot(DynadotConfig config) throws NoSuchAlgorithmException {
         this.config = config;
 
         if(config.getApiKey() == null || config.getApiSecret() == null)
