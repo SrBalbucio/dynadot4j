@@ -405,6 +405,170 @@ public class DomainClient extends Client {
                 .thenApply(response -> null);
     }
 
+    public Future<List<DnsssecRecord>> getDnssec(String domainName) {
+        return requester.get(getPath(domainName + "/dnssec"))
+                .thenApply(response -> {
+                    DnsssecRecordResponse r = response.asClazz(gson, DnsssecRecordResponse.class);
+                    return r.getDnssecList();
+                });
+    }
+
+    public Future<List<NameServerInfo>> getNameservers(String domainName) {
+        return requester.get(getPath(domainName + "/nameservers"))
+                .thenApply(response -> {
+                    NameServerListResponse r = response.asClazz(gson, NameServerListResponse.class);
+                    return r.getNameServers();
+                });
+    }
+
+    public Future<List<BulkSearchResult>> powerSearch(String domainName, @Nullable Boolean showPrice, @Nullable String currency) {
+        StringBuilder query = new StringBuilder(domainName + "/power_search_new");
+        List<String> params = new ArrayList<>();
+        if (showPrice != null) params.add("show_price=" + showPrice);
+        if (currency != null) params.add("currency=" + currency.toUpperCase());
+        if (!params.isEmpty()) query.append("?").append(String.join("&", params));
+        return requester.get(getPath(query.toString()))
+                .thenApply(response -> response.asJSON()
+                        .getJSONArray("domain_result_list").toList().stream()
+                        .map(obj -> {
+                            try {
+                                return gson.fromJson(new JSONObject((Map<String, Object>) obj).toString(), BulkSearchResult.class);
+                            } catch (JsonSyntaxException e) {
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toCollection(ArrayList::new)));
+    }
+
+    public Future<List<DomainInfo>> getDomainList(int page, int pageSize) {
+        return requester.get(getPath("?page=" + page + "&page_size=" + pageSize))
+                .thenApply(response -> {
+                    JSONObject data = response.asJSON();
+                    if (!data.has("domain_list")) return new ArrayList<>();
+                    return data.getJSONArray("domain_list").toList().stream()
+                            .map(obj -> {
+                                try {
+                                    return gson.fromJson(new JSONObject((Map<String, Object>) obj).toString(), DomainInfo.class);
+                                } catch (JsonSyntaxException e) {
+                                    return null;
+                                }
+                            })
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toCollection(ArrayList::new));
+                });
+    }
+
+    public Future<Long> restore(String domainName, @Nullable String currency, @Nullable String couponCode) {
+        JSONObject body = new JSONObject();
+        if (currency != null) body.put("currency", currency);
+        if (couponCode != null) body.put("coupon_code", couponCode);
+        return requester.post(getPath(domainName + "/restore"), body.toString())
+                .thenApply(response -> response.asClazz(gson, DomainRestoreResult.class).getOrderId());
+    }
+
+    public Future<Long> restore(String domainName) {
+        return restore(domainName, null, null);
+    }
+
+    public Future<String> getDomainAppraisal(String domainName) {
+        return requester.get(getPath(domainName + "/appraisal"))
+                .thenApply(response -> response.asClazz(gson, DomainAppraisalResponse.class).getAppraisalPrice());
+    }
+
+    public Future<JSONObject> getTldPrice(@Nullable String tld, @Nullable String currency, @Nullable String priceLevel,
+                                           @Nullable String sort, int page, int pageSize) {
+        List<String> params = new ArrayList<>();
+        params.add("page=" + page);
+        params.add("page_size=" + pageSize);
+        if (tld != null) params.add("tld=" + tld);
+        if (currency != null) params.add("currency=" + currency);
+        if (priceLevel != null) params.add("price_level=" + priceLevel);
+        if (sort != null) params.add("sort=" + sort);
+        return requester.get(getPath("get_tld_price?" + String.join("&", params)))
+                .thenApply(response -> response.asJSON());
+    }
+
+    public Future<Void> graceDelete(String domainName, boolean addToWaitingList) {
+        return requester.del(getPath(domainName + "/grace_delete?add_to_waiting_list=" + addToWaitingList))
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> graceDelete(String domainName) {
+        return graceDelete(domainName, false);
+    }
+
+    public Future<Void> postGraceDelete(String domainName) {
+        return requester.del(getPath(domainName + "/post_grace_delete"))
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> setFolder(String domainName, String folderName) {
+        return requester.put(getPath(domainName + "/folders/" + folderName), "{}")
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> setStealthForwarding(String domainName, String stealthUrl, String stealthTitle) {
+        JSONObject body = new JSONObject();
+        body.put("stealth_url", stealthUrl);
+        body.put("stealth_title", stealthTitle);
+        return requester.put(getPath(domainName + "/stealth_forwarding"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> setEmailForwarding(String domainName, String emailForwardType,
+                                            @Nullable List<JSONObject> emailAliasList,
+                                            @Nullable List<JSONObject> emailExchangeList) {
+        JSONObject body = new JSONObject();
+        body.put("email_forward_type", emailForwardType);
+        if (emailAliasList != null) body.put("email_alias_list", emailAliasList);
+        if (emailExchangeList != null) body.put("email_exchange_list", emailExchangeList);
+        return requester.put(getPath(domainName + "/email_forwarding"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> setContacts(String domainName, int registrantContactId, int adminContactId,
+                                     int techContactId, int billingContactId) {
+        JSONObject body = new JSONObject();
+        body.put("registrant_contact_id", registrantContactId);
+        body.put("admin_contact_id", adminContactId);
+        body.put("technical_contact_id", techContactId);
+        body.put("billing_contact_id", billingContactId);
+        return requester.put(getPath(domainName + "/contacts"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> setHosting(String domainName, String hostingType, boolean isModelView) {
+        JSONObject body = new JSONObject();
+        body.put("hosting_type", hostingType);
+        body.put("is_model_view", isModelView);
+        return requester.put(getPath(domainName + "/hosts"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> clearDomainSetting(String domainName, String serviceType) {
+        JSONObject body = new JSONObject();
+        body.put("service_type", serviceType);
+        return requester.put(getPath(domainName + "/clear_domain_setting"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<Void> setDomainLockStatus(String domainName, boolean lock) {
+        JSONObject body = new JSONObject();
+        body.put("lock", lock);
+        return requester.put(getPath(domainName + "/domain_lock"), body.toString())
+                .thenApply(response -> null);
+    }
+
+    public Future<List<String>> getPendingPushAcceptRequests() {
+        return requester.get(getPath("pending_accept_pushes"))
+                .thenApply(response ->
+                        response.asJSON().getJSONArray("push_domain_name")
+                                .toList().stream()
+                                .map(obj -> (String) obj)
+                                .collect(Collectors.toCollection(ArrayList::new)));
+    }
+
     private String getPath(String additional) {
         return "restful/v2/domains" + (additional != null ? "/" + additional : "");
     }

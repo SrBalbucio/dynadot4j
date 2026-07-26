@@ -5,6 +5,7 @@ import balbucio.dynadot4j.client.DomainClient;
 import balbucio.dynadot4j.model.*;
 import org.junit.jupiter.api.*;
 
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -22,7 +23,7 @@ class DomainClientIntegrationTest {
     private String domainName;
 
     @BeforeAll
-    void beforeAll() {
+    void beforeAll() throws NoSuchAlgorithmException {
         String apiKey = System.getenv("DYNADOT_APIKEY");
         String apiSecret = System.getenv("DYNADOT_APISECRET");
 
