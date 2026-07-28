@@ -8,9 +8,7 @@ import balbucio.dynadot4j.model.*;
 import com.google.gson.JsonSyntaxException;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -75,8 +73,6 @@ public class DomainClient extends Client {
             throw new InvalidDomainException(domainNames);
         if (currency == null)
             currency = "USD";
-        if (domainNames.size() > config.getPriceLevel().getSearchLimit())
-            domainNames = domainNames.subList(0, config.getPriceLevel().getSearchLimit() - 1);
 
         CompletableFuture<DynadotHttpResponse> future =
                 requester.get(getPath("bulk_search?show_price=true&currency=" + currency.toUpperCase() + "&domain_name_list=" + String.join(",", domainNames)));
@@ -479,15 +475,15 @@ public class DomainClient extends Client {
     /**
      * Recupera os preços de TLDs (Top-Level Domains).
      *
-     * @param tld         extensão de domínio desejada (ex.: com, net)
-     * @param currency    moeda em que os valores devem ser retornados (USD, BRL)
-     * @param priceLevel  nível de preço da conta (Regular, Bulk, Super Bulk)
-     * @param sort        campo para ordenação
-     * @param page        página dos resultados
-     * @param pageSize    quantidade de resultados por página
+     * @param tld        extensão de domínio desejada (ex.: com, net)
+     * @param currency   moeda em que os valores devem ser retornados (USD, BRL)
+     * @param priceLevel nível de preço da conta (Regular, Bulk, Super Bulk)
+     * @param sort       campo para ordenação
+     * @param page       página dos resultados
+     * @param pageSize   quantidade de resultados por página
      * @return lista de preços de TLDs numa promessa
      */
-    public Future<List<TldPriceEntry>> getTldPrice(@Nullable String tld, @Nullable String currency, @Nullable String priceLevel,
+    public Future<TldPriceList> getTldPrice(@Nullable String tld, @Nullable String currency, @Nullable String priceLevel,
                                             @Nullable String sort, int page, int pageSize) {
         List<String> params = new ArrayList<>();
         params.add("page=" + page);
@@ -497,17 +493,7 @@ public class DomainClient extends Client {
         if (priceLevel != null) params.add("price_level=" + priceLevel);
         if (sort != null) params.add("sort=" + sort);
         return requester.get(getPath("get_tld_price?" + String.join("&", params)))
-                .thenApply(response -> response.asJSON()
-                        .getJSONArray("tld_price_list").toList().stream()
-                        .map(obj -> {
-                            try {
-                                return gson.fromJson(new JSONObject((Map<String, Object>) obj).toString(), TldPriceEntry.class);
-                            } catch (JsonSyntaxException e) {
-                                return null;
-                            }
-                        })
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toCollection(ArrayList::new)));
+                .thenApply(response -> response.asClazz(gson, TldPriceList.class));
     }
 
     public Future<Void> graceDelete(String domainName, boolean addToWaitingList) {
@@ -538,8 +524,8 @@ public class DomainClient extends Client {
     }
 
     public Future<Void> setEmailForwarding(String domainName, String emailForwardType,
-                                            @Nullable List<JSONObject> emailAliasList,
-                                            @Nullable List<JSONObject> emailExchangeList) {
+                                           @Nullable List<JSONObject> emailAliasList,
+                                           @Nullable List<JSONObject> emailExchangeList) {
         JSONObject body = new JSONObject();
         body.put("email_forward_type", emailForwardType);
         if (emailAliasList != null) body.put("email_alias_list", emailAliasList);
@@ -549,7 +535,7 @@ public class DomainClient extends Client {
     }
 
     public Future<Void> setContacts(String domainName, int registrantContactId, int adminContactId,
-                                     int techContactId, int billingContactId) {
+                                    int techContactId, int billingContactId) {
         JSONObject body = new JSONObject();
         body.put("registrant_contact_id", registrantContactId);
         body.put("admin_contact_id", adminContactId);

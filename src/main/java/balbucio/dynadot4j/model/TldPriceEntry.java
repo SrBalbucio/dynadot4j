@@ -84,7 +84,7 @@ public class TldPriceEntry {
     private Integer minDuration;
 
     public int getPeriod() {
-        return DynadotConvertUtils.getYearPeriod(unit);
+        return DynadotConvertUtils.getYearPeriod(priceUnit);
     }
 
     public double registrationPriceAsDouble() {
