@@ -19,6 +19,14 @@ public class DomainRegistration {
     private int duration = 1;
     @SerializedName("auth_code")
     private String authCode = "";
+    @SerializedName("registrant_contact_id")
+    private int registrantContactId = 0;
+    @SerializedName("admin_contact_id")
+    private int adminContactId = 0;
+    @SerializedName("tech_contact_id")
+    private int techContactId = 0;
+    @SerializedName("billing_contact_id")
+    private int billingContactId = 0;
     private int customerId = 0;
     @SerializedName("name_server_list")
     private List<String> nameserver = new ArrayList<>();
@@ -46,6 +54,26 @@ public class DomainRegistration {
 
     public DomainRegistration withAuthCode(String authCode) {
         this.authCode = authCode;
+        return this;
+    }
+
+    public DomainRegistration withRegistrantContactId(int registrantContactId) {
+        this.registrantContactId = registrantContactId;
+        return this;
+    }
+
+    public DomainRegistration withAdminContactId(int adminContactId) {
+        this.adminContactId = adminContactId;
+        return this;
+    }
+
+    public DomainRegistration withTechContactId(int techContactId) {
+        this.techContactId = techContactId;
+        return this;
+    }
+
+    public DomainRegistration withBillingContactId(int billingContactId) {
+        this.billingContactId = billingContactId;
         return this;
     }
 
@@ -116,6 +144,10 @@ public class DomainRegistration {
         JSONObject domain = new JSONObject();
         domain.put("duration", duration);
         domain.put("auth_code", authCode);
+        domain.put("registrant_contact_id", registrantContactId);
+        domain.put("admin_contact_id", adminContactId);
+        domain.put("tech_contact_id", techContactId);
+        domain.put("billing_contact_id", billingContactId);
         domain.put("customer_id", customerId);
         domain.put("name_server_list", nameserver);
         domain.put("registrant_contact", registrant.toJSON());
