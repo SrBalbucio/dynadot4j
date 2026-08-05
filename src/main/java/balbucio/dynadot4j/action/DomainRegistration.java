@@ -2,7 +2,6 @@ package balbucio.dynadot4j.action;
 
 import balbucio.dynadot4j.model.DomainPrivacy;
 import balbucio.dynadot4j.model.RegistrantContact;
-import balbucio.dynadot4j.utils.DynadotConvertUtils;
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.ToString;
@@ -144,11 +143,11 @@ public class DomainRegistration {
         JSONObject domain = new JSONObject();
         domain.put("duration", duration);
         domain.put("auth_code", authCode);
-        domain.put("registrant_contact_id", registrantContactId);
-        domain.put("admin_contact_id", adminContactId);
-        domain.put("tech_contact_id", techContactId);
-        domain.put("billing_contact_id", billingContactId);
-        domain.put("customer_id", customerId);
+        if (registrantContactId != 0) domain.put("registrant_contact_id", registrantContactId);
+        if (adminContactId != 0) domain.put("admin_contact_id", adminContactId);
+        if (techContactId != 0) domain.put("tech_contact_id", techContactId);
+        if (billingContactId != 0) domain.put("billing_contact_id", billingContactId);
+        if (customerId != 0) domain.put("customer_id", customerId);
         domain.put("name_server_list", nameserver);
         domain.put("registrant_contact", registrant.toJSON());
         domain.put("admin_contact", admin.toJSON());
