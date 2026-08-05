@@ -1,5 +1,6 @@
 package balbucio.dynadot4j;
 
+import balbucio.dynadot4j.exception.DomainRequiresInvestigationException;
 import balbucio.dynadot4j.exception.DynadotHttpException;
 import balbucio.dynadot4j.exception.DynadotTooManyRequestException;
 import balbucio.dynadot4j.model.AccountPriceLevel;
@@ -172,6 +173,11 @@ public class DynadotRequester implements Runnable {
         if (statusCode == 200 || statusCode == 201 || statusCode == 202) return;
 
         JSONObject error = body.getJSONObject("error");
+
+        if (statusCode == 500 && DomainRequiresInvestigationException.matches(error)) {
+            throw new DomainRequiresInvestigationException(response, error, statusCode);
+        }
+
         switch (response.statusCode()) {
             case 429 -> throw new DynadotTooManyRequestException(response, error, statusCode);
             default -> throw new DynadotHttpException(response, error, statusCode);
