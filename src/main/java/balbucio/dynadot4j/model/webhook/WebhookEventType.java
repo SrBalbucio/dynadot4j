@@ -18,7 +18,8 @@ public enum WebhookEventType {
     ORDER_PAYMENT_REQUIRED("order_payment_required", OrderEventData.class),
     DOMAIN_STATUS_CHANGED("domain_status_changed", DomainStatusChangedData.class),
     DOMAIN_SUSPENSION_STATUS_CHANGED("domain_suspension_status_changed", DomainSuspensionStatusChangedData.class),
-    MAINTENANCE_NOTICE("maintenance_notice", MaintenanceNoticeData.class);
+    MAINTENANCE_NOTICE("maintenance_notice", MaintenanceNoticeData.class),
+    CONTACT_KYC_STATUS_CHANGED("contact_kyc_status_changed", ContactKycStatusChangedData.class);
 
     private final String label;
     private final Class<?> dataClass;

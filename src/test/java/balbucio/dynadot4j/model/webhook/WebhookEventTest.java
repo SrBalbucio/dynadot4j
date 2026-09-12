@@ -153,6 +153,17 @@ class WebhookEventTest {
     }
 
     @Test
+    void parseShouldRouteContactKycStatusChangedData() {
+        WebhookEvent<?> event = WebhookEvent.parse("""
+                {"event":"contact_kyc_status_changed","event_id":10,"timestamp":1700000000000,"data":{"contact_id":12,"status":"verified"}}
+                """, gson);
+        assertEquals(WebhookEventType.CONTACT_KYC_STATUS_CHANGED, event.getEventType());
+        ContactKycStatusChangedData data = event.getDataAs();
+        assertEquals(12, data.getContactId());
+        assertEquals("verified", data.getStatus());
+    }
+
+    @Test
     void parseShouldKeepRawDataForUnknownEvent() {
         WebhookEvent<?> event = WebhookEvent.parse("""
                 {"event":"some_future_event","event_id":9,"timestamp":1700000000000,"data":{"key":"value"}}
