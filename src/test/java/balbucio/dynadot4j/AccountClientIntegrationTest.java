@@ -4,6 +4,8 @@ import balbucio.dynadot4j.client.AccountClient;
 import balbucio.dynadot4j.model.DynadotAccountInfo;
 import org.junit.jupiter.api.*;
 
+import java.security.NoSuchAlgorithmException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @Tag("integration")
@@ -15,7 +17,7 @@ class AccountClientIntegrationTest {
     private AccountClient accountClient;
 
     @BeforeAll
-    void beforeAll() {
+    void beforeAll() throws NoSuchAlgorithmException {
         String apiKey = System.getenv("DYNADOT_APIKEY");
         String apiSecret = System.getenv("DYNADOT_APISECRET");
 

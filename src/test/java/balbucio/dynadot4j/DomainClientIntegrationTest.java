@@ -4,6 +4,7 @@ import balbucio.dynadot4j.action.DomainRegistration;
 import balbucio.dynadot4j.client.DomainClient;
 import balbucio.dynadot4j.model.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Order;
 
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;

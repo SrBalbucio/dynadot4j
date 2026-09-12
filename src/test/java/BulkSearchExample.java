@@ -3,11 +3,12 @@ import balbucio.dynadot4j.DynadotConfig;
 import balbucio.dynadot4j.client.DomainClient;
 
 import javax.swing.*;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ExecutionException;
 
 public class BulkSearchExample {
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException {
+    public static void main(String[] args) throws ExecutionException, InterruptedException, NoSuchAlgorithmException {
         String apiKey = System.getenv("DYNADOT_APIKEY");
         String apiSecret = System.getenv("DYNADOT_APISECRET");
 

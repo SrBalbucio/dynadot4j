@@ -2,6 +2,8 @@ package balbucio.dynadot4j.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BulkSearchResultTest {
@@ -29,8 +31,9 @@ class BulkSearchResultTest {
 
     @Test
     void shouldHandleAllArgsConstructor() {
-        BulkSearchResult result = new BulkSearchResult("example.com", "Yes");
+        BulkSearchResult result = new BulkSearchResult("example.com", "Yes", "No", List.of());
         assertEquals("example.com", result.getDomainName());
         assertTrue(result.isAvailable());
+        assertFalse(result.isPremium());
     }
 }

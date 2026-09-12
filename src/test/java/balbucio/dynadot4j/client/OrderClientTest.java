@@ -61,9 +61,10 @@ class OrderClientTest {
                 """, DynadotHttpResponse.class);
         when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
 
-        client.cancelTransfer("order123").get();
+        client.cancelTransfer("order123", "example.com").get();
 
-        verify(requester).post("restful/v2/orders/order123/cancel_transfer", "");
+        verify(requester).post(eq("restful/v2/orders/order123/cancel_transfer"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"domain_name\":\"example.com\""));
     }
 
     @Test
@@ -71,7 +72,7 @@ class OrderClientTest {
         when(requester.post(anyString(), anyString()))
                 .thenReturn(CompletableFuture.failedFuture(new RuntimeException("API error")));
 
-        assertThrows(Exception.class, () -> client.cancelTransfer("order123").get());
+        assertThrows(Exception.class, () -> client.cancelTransfer("order123", "example.com").get());
     }
 
     @Test
@@ -81,9 +82,9 @@ class OrderClientTest {
                 """, DynadotHttpResponse.class);
         when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
 
-        client.setTransferAuthCode("order123", "newauthcode").get();
+        client.setTransferAuthCode("order123", "example.com", "newauthcode").get();
 
-        verify(requester).post(eq("restful/v2/orders/order123/transfer_auth_code"), bodyCaptor.capture());
+        verify(requester).post(eq("restful/v2/orders/order123/update_transfer_auth_code"), bodyCaptor.capture());
         assertTrue(bodyCaptor.getValue().contains("\"auth_code\":\"newauthcode\""));
     }
 
@@ -92,6 +93,6 @@ class OrderClientTest {
         when(requester.post(anyString(), anyString()))
                 .thenReturn(CompletableFuture.failedFuture(new RuntimeException("API error")));
 
-        assertThrows(Exception.class, () -> client.setTransferAuthCode("order123", "code").get());
+        assertThrows(Exception.class, () -> client.setTransferAuthCode("order123", "example.com", "code").get());
     }
 }

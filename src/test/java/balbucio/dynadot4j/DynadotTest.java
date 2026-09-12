@@ -6,6 +6,8 @@ import balbucio.dynadot4j.client.DomainClient;
 import com.google.gson.Gson;
 import org.junit.jupiter.api.Test;
 
+import java.security.NoSuchAlgorithmException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class DynadotTest {
@@ -16,7 +18,11 @@ class DynadotTest {
                 .apiSecret("test-secret")
                 .endpointUrl("https://api.dynadot.com")
                 .build();
-        return new Dynadot(config);
+        try {
+            return new Dynadot(config);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
