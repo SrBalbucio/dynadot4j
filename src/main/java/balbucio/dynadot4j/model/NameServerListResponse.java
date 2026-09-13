@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 public class NameServerListResponse {
-    @SerializedName("name_servers")
+    @SerializedName(value = "name_servers", alternate = {"nameserver_list"})
     private List<NameServerInfo> nameServers;
 }

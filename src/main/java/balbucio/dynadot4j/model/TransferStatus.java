@@ -13,4 +13,13 @@ public class TransferStatus {
 
     @SerializedName("transfer_status")
     private String transferStatus;
+
+    @SerializedName("expiration_date")
+    private Long expirationDate;
+
+    @SerializedName("order_created_date")
+    private Long orderCreatedDate;
+
+    @SerializedName("order_completed_date")
+    private Long orderCompletedDate;
 }

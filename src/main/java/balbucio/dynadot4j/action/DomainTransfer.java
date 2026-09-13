@@ -178,7 +178,7 @@ public class DomainTransfer {
 
         JSONObject obj = new JSONObject();
         obj.put("domain", domain);
-        obj.put("register_premium", registerPremium);
+        obj.put("transfer_premium", registerPremium);
         obj.put("coupon_code", couponCode);
         obj.put("currency", currency);
         return obj;

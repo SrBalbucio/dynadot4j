@@ -257,11 +257,11 @@ class DomainClientTest {
                 """, DynadotHttpResponse.class);
         when(requester.put(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
 
-        client.setPrivacy("example.com", DomainPrivacy.FULL, true).get();
+        client.setPrivacy("example.com", DomainPrivacy.FULL).get();
 
         verify(requester).put(eq("restful/v2/domains/example.com/privacy"), bodyCaptor.capture());
         assertTrue(bodyCaptor.getValue().contains("\"privacy_level\":\"full\""));
-        assertTrue(bodyCaptor.getValue().contains("\"whois_privacy_option\":true"));
+        assertFalse(bodyCaptor.getValue().contains("whois_privacy_option"));
     }
 
     @Test
@@ -410,16 +410,17 @@ class DomainClientTest {
     }
 
     @Test
-    void pushWithUnlockShouldIncludeUnlockFlag() throws Exception {
+    void pushWithEmailShouldIncludeEmail() throws Exception {
         DynadotHttpResponse response = gson.fromJson("""
                 {"data":{}}
                 """, DynadotHttpResponse.class);
         when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
 
-        client.push("example.com", "receiver_user", true).get();
+        client.push("example.com", "receiver_user", "receiver@example.com").get();
 
         verify(requester).post(anyString(), bodyCaptor.capture());
-        assertTrue(bodyCaptor.getValue().contains("\"unlock_domain_for_push\":true"));
+        assertTrue(bodyCaptor.getValue().contains("\"receiver_push_username\":\"receiver_user\""));
+        assertTrue(bodyCaptor.getValue().contains("\"receiver_email\":\"receiver@example.com\""));
     }
 
     @Test
@@ -431,9 +432,8 @@ class DomainClientTest {
 
         client.acceptPush("example.com").get();
 
-        verify(requester).post(eq("restful/v2/domains/push/accept"), bodyCaptor.capture());
-        assertTrue(bodyCaptor.getValue().contains("\"domain_name\":\"example.com\""));
-        assertTrue(bodyCaptor.getValue().contains("\"action\":\"accept\""));
+        verify(requester).post(eq("restful/v2/domains/example.com/accept_push"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"push_action\":\"accept\""));
     }
 
     @Test
@@ -445,15 +445,14 @@ class DomainClientTest {
 
         client.declinePush("example.com").get();
 
-        verify(requester).post(eq("restful/v2/domains/push/accept"), bodyCaptor.capture());
-        assertTrue(bodyCaptor.getValue().contains("\"domain_name\":\"example.com\""));
-        assertTrue(bodyCaptor.getValue().contains("\"action\":\"decline\""));
+        verify(requester).post(eq("restful/v2/domains/example.com/accept_push"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"push_action\":\"decline\""));
     }
 
     @Test
     void getPendingPushRequestsShouldReturnList() throws Exception {
         DynadotHttpResponse response = gson.fromJson("""
-                {"data":{"push_domain_name":["haha.com","haha1.com"]}}
+                {"data":{"domain_name_list":["haha.com","haha1.com"]}}
                 """, DynadotHttpResponse.class);
         when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
 
@@ -462,7 +461,21 @@ class DomainClientTest {
         assertNotNull(pending);
         assertEquals(2, pending.size());
         assertTrue(pending.contains("haha.com"));
-        verify(requester).get("restful/v2/domains/push/pending");
+        verify(requester).get("restful/v2/domains/pending_accept_pushes");
+    }
+
+    @Test
+    void getPendingPushAcceptRequestsShouldReturnList() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"domain_name_list":["haha.com","haha1.com"]}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        List<String> pending = client.getPendingPushAcceptRequests().get();
+
+        assertNotNull(pending);
+        assertEquals(2, pending.size());
+        verify(requester).get("restful/v2/domains/pending_accept_pushes");
     }
 
     @Test
@@ -474,9 +487,9 @@ class DomainClientTest {
 
         client.authorizeTransferAway("example.com", "order123", true).get();
 
-        verify(requester).post(eq("restful/v2/domains/example.com/authorize_transfer_away"), bodyCaptor.capture());
-        assertTrue(bodyCaptor.getValue().contains("\"order_id\":\"order123\""));
-        assertTrue(bodyCaptor.getValue().contains("\"authorize\":\"approve\""));
+        verify(requester).post(eq("restful/v2/orders/order123/authorize_transfer_away"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"domain_name\":\"example.com\""));
+        assertTrue(bodyCaptor.getValue().contains("\"approve\":true"));
     }
 
     @Test
@@ -489,7 +502,7 @@ class DomainClientTest {
         client.authorizeTransferAway("example.com", "order123", false).get();
 
         verify(requester).post(anyString(), bodyCaptor.capture());
-        assertTrue(bodyCaptor.getValue().contains("\"authorize\":\"deny\""));
+        assertTrue(bodyCaptor.getValue().contains("\"approve\":false"));
     }
 
     @Test

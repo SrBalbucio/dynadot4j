@@ -8,8 +8,7 @@ import java.util.List;
 
 @Getter
 @ToString
-public class TransferStatusResponse {
-
-    @SerializedName(value = "transfer_list", alternate = {"domain_transfer_status_list"})
-    private List<TransferStatus> transferList;
+public class ContactListResponse {
+    @SerializedName("contact_list")
+    private List<Contact> contactList;
 }

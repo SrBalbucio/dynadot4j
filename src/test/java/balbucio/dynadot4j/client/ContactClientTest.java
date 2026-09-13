@@ -63,13 +63,14 @@ class ContactClientTest {
 
         int id = client.createContact(contact).get();
         assertEquals(42, id);
-        verify(requester).post(eq("restful/v2/contacts"), anyString());
+        verify(requester).post(eq("restful/v2/contacts"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"contact\""));
     }
 
     @Test
     void getContactShouldReturnContact() throws Exception {
         DynadotHttpResponse response = gson.fromJson("""
-                {"data":{"name":"John","email":"j@j.com","organization":"","phone_number":"","phone_cc":"","address":"","city":"","state":"","country":""}}
+                {"data":{"contact":{"name":"John","email":"j@j.com","organization":"","phone_number":"","phone_cc":"","address1":"","city":"","state":"","country":""}}}
                 """, DynadotHttpResponse.class);
 
         when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
@@ -88,13 +89,30 @@ class ContactClientTest {
                 {"data":{"contact_id":42}}
                 """, DynadotHttpResponse.class);
 
-        when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
+        when(requester.put(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
 
         RegistrantContact contact = RegistrantContact.builder().name("John").build();
         int id = client.updateContact(1, contact).get();
 
         assertEquals(42, id);
-        verify(requester).post(eq("restful/v2/contacts/1"), anyString());
+        verify(requester).put(eq("restful/v2/contacts/1"), bodyCaptor.capture());
+        assertTrue(bodyCaptor.getValue().contains("\"contact\""));
+    }
+
+    @Test
+    void listContactsShouldGetCorrectPathAndParseList() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"contact_list":[{"contact_id":1,"name":"John","email":"j@j.com"}]}}
+                """, DynadotHttpResponse.class);
+
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        var contacts = client.listContacts(1, 10).get();
+
+        assertNotNull(contacts);
+        assertEquals(1, contacts.size());
+        assertEquals(1, contacts.get(0).getContactId());
+        verify(requester).get(eq("restful/v2/contacts?page=1&page_size=10"));
     }
 
     @Test
@@ -106,7 +124,7 @@ class ContactClientTest {
         when(requester.del(anyString())).thenReturn(CompletableFuture.completedFuture(response));
 
         assertDoesNotThrow(() -> client.deleteContact(1).get());
-        verify(requester).del("1");
+        verify(requester).del("restful/v2/contacts/1");
     }
 
     @Test
@@ -114,18 +132,5 @@ class ContactClientTest {
         when(requester.del(anyString())).thenReturn(CompletableFuture.failedFuture(new RuntimeException("API error")));
 
         assertThrows(Exception.class, () -> client.deleteContact(1).get());
-    }
-
-    @Test
-    void setResellerContactWhoisVerificationStatusShouldPutCorrectPathAndBody() throws Exception {
-        DynadotHttpResponse response = gson.fromJson("""
-                {"data":{}}
-                """, DynadotHttpResponse.class);
-        when(requester.put(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
-
-        client.setResellerContactWhoisVerificationStatus(42, "verified").get();
-
-        verify(requester).put(eq("restful/v2/contacts/42/reseller/whois-verification-status"), bodyCaptor.capture());
-        assertTrue(bodyCaptor.getValue().contains("\"status\":\"verified\""));
     }
 }

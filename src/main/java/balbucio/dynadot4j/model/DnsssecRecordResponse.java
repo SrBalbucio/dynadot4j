@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 public class DnsssecRecordResponse {
-    @SerializedName("dnssec_list")
+    @SerializedName(value = "dnssec_list", alternate = {"dnssec_info_list"})
     private List<DnsssecRecord> dnssecList;
 }

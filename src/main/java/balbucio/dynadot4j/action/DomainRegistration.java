@@ -142,18 +142,18 @@ public class DomainRegistration {
     public JSONObject toJSON() {
         JSONObject domain = new JSONObject();
         domain.put("duration", duration);
-        domain.put("auth_code", authCode);
+        if (authCode != null && !authCode.isEmpty()) domain.put("auth_code", authCode);
         if (registrantContactId != 0) domain.put("registrant_contact_id", registrantContactId);
         if (adminContactId != 0) domain.put("admin_contact_id", adminContactId);
         if (techContactId != 0) domain.put("tech_contact_id", techContactId);
         if (billingContactId != 0) domain.put("billing_contact_id", billingContactId);
         if (customerId != 0) domain.put("customer_id", customerId);
-        domain.put("name_server_list", nameserver);
-        domain.put("registrant_contact", registrant.toJSON());
-        domain.put("admin_contact", admin.toJSON());
-        domain.put("tech_contact", tech.toJSON());
-        domain.put("billing_contact", billing.toJSON());
-        domain.put("privacy", privacy.getLabel());
+        if (nameserver != null && !nameserver.isEmpty()) domain.put("name_server_list", nameserver);
+        if (registrant != null) domain.put("registrant_contact", registrant.toJSON());
+        if (admin != null) domain.put("admin_contact", admin.toJSON());
+        if (tech != null) domain.put("tech_contact", tech.toJSON());
+        if (billing != null) domain.put("billing_contact", billing.toJSON());
+        if (privacy != null) domain.put("privacy", privacy.getLabel());
 
         JSONObject obj = new JSONObject();
         obj.put("domain", domain);

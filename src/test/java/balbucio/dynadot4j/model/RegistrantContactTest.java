@@ -52,7 +52,7 @@ class RegistrantContactTest {
         assertEquals("jane@example.com", json.getString("email"));
         assertEquals("987654321", json.getString("phone_number"));
         assertEquals("1", json.getString("phone_cc"));
-        assertEquals("123 Main St", json.getString("address"));
+        assertEquals("123 Main St", json.getString("address1"));
         assertEquals("New York", json.getString("city"));
         assertEquals("NY", json.getString("state"));
         assertEquals("USA", json.getString("country"));
@@ -70,8 +70,8 @@ class RegistrantContactTest {
     @Test
     void allArgsConstructorShouldWork() {
         RegistrantContact contact = new RegistrantContact(
-                "Org", "Name", "e@e.com", "123", "55",
-                "Addr", "City", "ST", "BR"
+                "Org", "Name", "e@e.com", "123", "55", null, null,
+                "Addr", null, "City", "ST", "12345", "BR", null
         );
         assertEquals("Name", contact.getName());
         assertEquals("Org", contact.getOrganization());

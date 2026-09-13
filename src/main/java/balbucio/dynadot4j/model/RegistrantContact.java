@@ -20,24 +20,58 @@ public class RegistrantContact {
     private String phoneNumber;
     @SerializedName("phone_cc")
     private String phoneCC;
+    @SerializedName("fax_number")
+    private String faxNumber;
+    @SerializedName("fax_cc")
+    private String faxCc;
     @SerializedName("address1")
     private String address;
+    @SerializedName("address2")
+    private String address2;
     private String city;
     private String state;
+    private String zip;
     private String country;
+    @SerializedName("contact_extension")
+    private ContactExtension contactExtension;
 
+    public String getAddress1() {
+        return address;
+    }
 
-    public JSONObject toJSON(){
+    public void setAddress1(String address1) {
+        this.address = address1;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @EqualsAndHashCode
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class ContactExtension {
+        private String tld;
+    }
+
+    public JSONObject toJSON() {
         JSONObject obj = new JSONObject();
-        obj.put("organization", organization);
-        obj.put("name", name);
-        obj.put("email", email);
-        obj.put("phone_number", phoneNumber);
-        obj.put("phone_cc", phoneCC);
-        obj.put("address", address);
-        obj.put("city", city);
-        obj.put("state", state);
-        obj.put("country", country);
+        if (organization != null) obj.put("organization", organization);
+        if (name != null) obj.put("name", name);
+        if (email != null) obj.put("email", email);
+        if (phoneNumber != null) obj.put("phone_number", phoneNumber);
+        if (phoneCC != null) obj.put("phone_cc", phoneCC);
+        if (faxNumber != null) obj.put("fax_number", faxNumber);
+        if (faxCc != null) obj.put("fax_cc", faxCc);
+        if (address != null) obj.put("address1", address);
+        if (address2 != null) obj.put("address2", address2);
+        if (city != null) obj.put("city", city);
+        if (state != null) obj.put("state", state);
+        if (zip != null) obj.put("zip", zip);
+        if (country != null) obj.put("country", country);
+        if (contactExtension != null && contactExtension.getTld() != null) {
+            obj.put("contact_extension", new JSONObject().put("tld", contactExtension.getTld()));
+        }
         return obj;
     }
 }
