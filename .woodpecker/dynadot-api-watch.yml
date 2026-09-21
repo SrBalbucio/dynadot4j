@@ -1,0 +1,17 @@
+when:
+  event: [cron, manual]
+  cron: dynadot-api-watch
+
+steps:
+  api-doc-watch:
+    image: alpine:3.20
+    commands:
+      - apk add --no-cache bash curl diffutils jq perl python3
+      - bash scripts/watch-dynadot-api.sh
+
+  unit-tests:
+    depends_on:
+      - api-doc-watch
+    image: maven:3.9-eclipse-temurin-17
+    commands:
+      - mvn -B test
