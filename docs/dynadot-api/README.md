@@ -14,6 +14,12 @@ Optional environment variables:
 - `DYNADOT_API_BASELINE`: baseline path. Defaults to `docs/dynadot-api/latest.normalized`.
 - `DYNADOT_API_WORK_DIR`: output directory for the latest fetched artifacts. Defaults to `target/dynadot-api-watch`.
 
+Optional Woodpecker secret:
+
+- `discord_webhook_url`: Discord webhook URL used by the notification steps.
+
+The pipeline sends a Discord message when the watch passes and another when the watch or tests fail.
+
 ## Update The Baseline
 
 When the pipeline detects a change, inspect the diff, update the SDK if needed, and then refresh the accepted baseline locally:

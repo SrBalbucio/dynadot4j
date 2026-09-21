@@ -15,3 +15,40 @@ steps:
     image: maven:3.9-eclipse-temurin-17
     commands:
       - mvn -B test
+
+  notify-discord-success:
+    depends_on:
+      - unit-tests
+    image: alpine:3.20
+    commands:
+      - apk add --no-cache bash curl python3
+      - bash scripts/notify-discord.sh success
+    environment:
+      DISCORD_WEBHOOK_URL:
+        from_secret: discord_webhook_url
+
+  notify-discord-api-failure:
+    depends_on:
+      - api-doc-watch
+    image: alpine:3.20
+    commands:
+      - apk add --no-cache bash curl python3
+      - bash scripts/notify-discord.sh failure
+    environment:
+      DISCORD_WEBHOOK_URL:
+        from_secret: discord_webhook_url
+    when:
+      - status: [failure]
+
+  notify-discord-test-failure:
+    depends_on:
+      - unit-tests
+    image: alpine:3.20
+    commands:
+      - apk add --no-cache bash curl python3
+      - bash scripts/notify-discord.sh failure
+    environment:
+      DISCORD_WEBHOOK_URL:
+        from_secret: discord_webhook_url
+    when:
+      - status: [failure]
