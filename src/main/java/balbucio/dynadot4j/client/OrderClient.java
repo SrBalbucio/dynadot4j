@@ -61,7 +61,8 @@ public class OrderClient extends Client {
         params.add("page=" + page);
         params.add("page_size=" + pageSize);
 
-        return requester.get(getPath("?" + String.join("&", params)))
+        String path = getPath(null) + (params.isEmpty() ? "" : "?" + String.join("&", params));
+        return requester.get(path)
                 .thenApply(response -> response.asJSON()
                         .optJSONArray("order_list") == null ? new ArrayList<>() : response.asJSON()
                         .getJSONArray("order_list").toList().stream()

@@ -95,4 +95,32 @@ class OrderClientTest {
 
         assertThrows(Exception.class, () -> client.setTransferAuthCode("order123", "example.com", "code").get());
     }
+
+    @Test
+    void getOrderStatusShouldGetCorrectPath() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"order_list":[{"order_id":123,"submitted_date":1000,"currency":"USD","status":"Completed"}]}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        var order = client.getOrderStatus("order123").get();
+
+        verify(requester).get(eq("restful/v2/orders/order123"));
+        assertNotNull(order);
+        assertEquals(123, order.getOrderId());
+    }
+
+    @Test
+    void getOrderHistoryShouldGetCorrectPath() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"order_list":[{"order_id":456,"submitted_date":2000,"currency":"USD","status":"Completed"}]}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        var orders = client.getOrderHistory(1, 10).get();
+
+        verify(requester).get(eq("restful/v2/orders?page=1&page_size=10"));
+        assertEquals(1, orders.size());
+        assertEquals(456, orders.get(0).getOrderId());
+    }
 }

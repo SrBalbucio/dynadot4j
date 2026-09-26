@@ -20,6 +20,17 @@ public class BulkSearchResult {
     private String premium;
     @SerializedName("price_list")
     private List<DomainPriceEntry> priceList;
+    @SerializedName("details_error_message")
+    private String detailsErrorMessage;
+    private String source;
+    private String confidence;
+
+    public BulkSearchResult(String domainName, String available, String premium, List<DomainPriceEntry> priceList) {
+        this.domainName = domainName;
+        this.available = available;
+        this.premium = premium;
+        this.priceList = priceList;
+    }
 
     public boolean isAvailable() {
         return DynadotConvertUtils.asBool(available);

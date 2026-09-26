@@ -36,4 +36,12 @@ class BulkSearchResultTest {
         assertTrue(result.isAvailable());
         assertFalse(result.isPremium());
     }
+
+    @Test
+    void shouldHandleExtendedFields() {
+        BulkSearchResult result = new BulkSearchResult("example.com", "Yes", "No", List.of(), "no error", "registry", "high");
+        assertEquals("no error", result.getDetailsErrorMessage());
+        assertEquals("registry", result.getSource());
+        assertEquals("high", result.getConfidence());
+    }
 }

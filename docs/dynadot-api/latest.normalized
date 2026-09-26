@@ -167,6 +167,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "search",
       "requestDemoJson": {
         "requestBody": {
@@ -181,6 +182,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/search"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -212,10 +214,10 @@
       ],
       "ResponseDemoList": {
         "200": {
-          "responseDemoJson": "{\n  \"code\": 200,\n  \"message\": \"Success\",\n  \"data\": {\n    \"domain_result_list\": [\n      {\n        \"domain_name\": \"example.com\",\n        \"available\": \"Yes\",\n        \"source\": \"registry\",\n        \"confidence\": \"high\"\n      },\n      {\n        \"domain_name\": \"example.net\",\n        \"details_error_message\": \"busy\"\n      }\n    ]\n  }\n}",
-          "responseDemoJsonStructure": "{\n  \"code\": \"Integer\",\n  \"message\": \"String\",\n  \"data\": {\n    \"domain_result_list\": [\n      {\n        \"domain_name\": \"String\",\n        \"available\": \"String\",\n        \"source\": \"String\",\n        \"confidence\": \"String\"\n      }\n    ]\n  }\n}",
-          "responseDemoXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n  <Status>\n    <Code>200</Code>\n    <Message>Success</Message>\n  </Status>\n  <Data>\n    <DomainResultList>\n      <Domain>\n        <DomainName>example.com</DomainName>\n        <Available>Yes</Available>\n        <Source>registry</Source>\n        <Confidence>high</Confidence>\n      </Domain>\n      <Domain>\n        <DomainName>example.net</DomainName>\n        <DetailsErrorMessage>busy</DetailsErrorMessage>\n      </Domain>\n    </DomainResultList>\n  </Data>\n</Response>\n",
-          "responseDemoXmlStructure": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n  <Status>\n    <Code>Integer</Code>\n    <Message>String</Message>\n  </Status>\n  <Data>\n    <DomainResultList>\n      <Domain>\n        <DomainName>String</DomainName>\n        <Available>String</Available>\n        <Source>String</Source>\n        <Confidence>String</Confidence>\n      </Domain>\n    </DomainResultList>\n  </Data>\n</Response>\n"
+          "responseDemoJson": "{\n  \"code\": 200,\n  \"message\": \"Success\",\n  \"data\": {\n    \"domain_result_list\": [\n      {\n        \"domain_name\": \"example.com\",\n        \"available\": \"Yes\",\n        \"source\": \"registry\",\n        \"confidence\": \"high\",\n        \"premium\": \"unknown\",\n        \"price_list\": [\n          {\n            \"currency\": \"USD\",\n            \"unit\": \"1 Year\",\n            \"registration_price\": \"9.99\",\n            \"renewal_price\": \"11.99\",\n            \"transfer_price\": \"9.99\",\n            \"restore_price\": \"25.00\"\n          }\n        ]\n      },\n      {\n        \"domain_name\": \"example.net\",\n        \"details_error_message\": \"busy\"\n      }\n    ]\n  }\n}",
+          "responseDemoJsonStructure": "{\n  \"code\": \"Integer\",\n  \"message\": \"String\",\n  \"data\": {\n    \"domain_result_list\": [\n      {\n        \"domain_name\": \"String\",\n        \"available\": \"String\",\n        \"source\": \"String\",\n        \"confidence\": \"String\",\n        \"premium\": \"String\",\n        \"price_list\": [\n          {\n            \"currency\": \"String\",\n            \"unit\": \"String\",\n            \"registration_price\": \"String\",\n            \"renewal_price\": \"String\",\n            \"transfer_price\": \"String\",\n            \"restore_price\": \"String\"\n          }\n        ]\n      }\n    ]\n  }\n}",
+          "responseDemoXml": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n  <Status>\n    <Code>200</Code>\n    <Message>Success</Message>\n  </Status>\n  <Data>\n    <DomainResultList>\n      <Domain>\n        <DomainName>example.com</DomainName>\n        <Available>Yes</Available>\n        <Source>registry</Source>\n        <Confidence>high</Confidence>\n        <Premium>unknown</Premium>\n        <PriceList>\n          <PriceListItem>\n            <Currency>USD</Currency>\n            <Unit>1 Year</Unit>\n            <RegistrationPrice>9.99</RegistrationPrice>\n            <RenewalPrice>11.99</RenewalPrice>\n            <TransferPrice>9.99</TransferPrice>\n            <RestorePrice>25.00</RestorePrice>\n          </PriceListItem>\n        </PriceList>\n      </Domain>\n      <Domain>\n        <DomainName>example.net</DomainName>\n        <DetailsErrorMessage>busy</DetailsErrorMessage>\n      </Domain>\n    </DomainResultList>\n  </Data>\n</Response>\n",
+          "responseDemoXmlStructure": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Response>\n  <Status>\n    <Code>Integer</Code>\n    <Message>String</Message>\n  </Status>\n  <Data>\n    <DomainResultList>\n      <Domain>\n        <DomainName>String</DomainName>\n        <Available>String</Available>\n        <Source>String</Source>\n        <Confidence>String</Confidence>\n        <Premium>String</Premium>\n        <PriceList>\n          <PriceListItem>\n            <Currency>String</Currency>\n            <Unit>String</Unit>\n            <RegistrationPrice>String</RegistrationPrice>\n            <RenewalPrice>String</RenewalPrice>\n            <TransferPrice>String</TransferPrice>\n            <RestorePrice>String</RestorePrice>\n          </PriceListItem>\n        </PriceList>\n      </Domain>\n    </DomainResultList>\n  </Data>\n</Response>\n"
         },
         "400": {
           "responseDemoJson": "{\n  \"code\": 400,\n  \"message\": \"Bad Request\",\n  \"error\": {\n    \"description\": \"The required parameter domain_name_list is missing.\"\n  }\n}",
@@ -365,6 +367,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "bulk_search",
       "requestDemoJson": {
         "requestBody": {
@@ -384,6 +387,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/bulk_search"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -731,6 +735,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "power_search",
       "requestDemoJson": {
         "requestBody": {
@@ -746,6 +751,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/power_search_new"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -933,6 +939,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "suggestion_search",
       "requestDemoJson": {
         "requestBody": {
@@ -949,6 +956,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/suggestion_search"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -1047,6 +1055,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "get_pending_push_accept_request",
       "requestDemoJson": {
         "requestBody": {},
@@ -1059,6 +1068,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/pending_accept_pushes"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -1163,6 +1173,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "post_grace_delete",
       "requestDemoJson": {
         "requestBody": {},
@@ -1175,6 +1186,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/post_grace_delete"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -1298,6 +1310,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "get_dnssec",
       "requestDemoJson": {
         "requestBody": {},
@@ -1310,6 +1323,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/dnssec"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -1746,6 +1760,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "domain_list",
       "requestDemoJson": {
         "requestBody": {
@@ -1763,6 +1778,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -2149,6 +2165,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "domain_info",
       "requestDemoJson": {
         "requestBody": {},
@@ -2161,6 +2178,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -2330,6 +2348,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "restore",
       "requestDemoJson": {
         "requestBody": {
@@ -2345,6 +2364,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/restore"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -2441,6 +2461,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "domain_appraisal",
       "requestDemoJson": {
         "requestBody": {},
@@ -2452,6 +2473,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/appraisal"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -2743,6 +2765,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "domain_get_tld_price",
       "requestDemoJson": {
         "requestBody": {
@@ -2763,6 +2786,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/get_tld_price"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -2896,6 +2920,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_domain_forwarding",
       "requestDemoJson": {
         "requestBody": {
@@ -2913,6 +2938,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/domain_forwarding"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -3421,7 +3447,6 @@
             ".AI domains require a minimum registration period of 2 years for new registrations.",
             "No matching language, charset problem.",
             ".LT contact missing orgcode.",
-            ".FR cannot register domains with domain privacy.",
             "The zip/postal code for this contact record is invalid."
           ],
           "name": "Bad Request"
@@ -3523,6 +3548,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "register",
       "requestDemoJson": {
         "requestBody": {
@@ -3624,6 +3650,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/register"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -3817,6 +3844,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "renew",
       "requestDemoJson": {
         "requestBody": {
@@ -3835,6 +3863,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/renew"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -4397,6 +4426,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "transfer_in",
       "requestDemoJson": {
         "requestBody": {
@@ -4498,6 +4528,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/transfer_in"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -4648,6 +4679,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "grace_delete",
       "requestDemoJson": {
         "requestBody": {
@@ -4662,6 +4694,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/grace_delete"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -4768,6 +4801,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_folder",
       "requestDemoJson": {
         "requestBody": {},
@@ -4780,6 +4814,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/folders/{folder_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -4900,6 +4935,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_stealth_forwarding",
       "requestDemoJson": {
         "requestBody": {
@@ -4915,6 +4951,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/stealth_forwarding"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -5094,6 +5131,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_email_forwarding",
       "requestDemoJson": {
         "requestBody": {
@@ -5120,6 +5158,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/email_forwarding"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -5203,6 +5242,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_renew_option",
       "requestDemoJson": {
         "requestBody": {
@@ -5217,6 +5257,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/renew_option"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -5352,6 +5393,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_contacts",
       "requestDemoJson": {
         "requestBody": {
@@ -5369,6 +5411,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/contacts"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -5511,6 +5554,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "get_transfer_status",
       "requestDemoJson": {
         "requestBody": {
@@ -5524,6 +5568,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/transfer_status"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -5600,6 +5645,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "get_nameserver",
       "requestDemoJson": {
         "requestBody": {},
@@ -5611,6 +5657,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/nameservers"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -5710,6 +5757,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_nameserver",
       "requestDemoJson": {
         "requestBody": {
@@ -5726,6 +5774,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/nameservers"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -5842,6 +5891,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_hosting",
       "requestDemoJson": {
         "requestBody": {
@@ -5857,6 +5907,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/hosts"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -5968,6 +6019,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_parking",
       "requestDemoJson": {
         "requestBody": {
@@ -5982,6 +6034,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/parking"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -6110,6 +6163,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_privacy",
       "requestDemoJson": {
         "requestBody": {
@@ -6124,6 +6178,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/privacy"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -6264,6 +6319,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_dnssec",
       "requestDemoJson": {
         "requestBody": {
@@ -6283,6 +6339,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/dnssec"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -6387,6 +6444,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "clear_dnssec",
       "requestDemoJson": {
         "requestBody": {},
@@ -6399,6 +6457,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/dnssec"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -6512,6 +6571,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "clear_domain_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -6526,6 +6586,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/clear_domain_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -6644,6 +6705,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_domain_lock_status",
       "requestDemoJson": {
         "requestBody": {
@@ -6658,6 +6720,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/domain_lock"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -6792,6 +6855,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "push",
       "requestDemoJson": {
         "requestBody": {
@@ -6807,6 +6871,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/push"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -6890,6 +6955,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "accept_push",
       "requestDemoJson": {
         "requestBody": {
@@ -6904,6 +6970,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/accept_push"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -7162,6 +7229,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "get_dns",
       "requestDemoJson": {
         "requestBody": {},
@@ -7174,6 +7242,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/records"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -7426,6 +7495,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_dns",
       "requestDemoJson": {
         "requestBody": {
@@ -7456,6 +7526,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/records"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -7603,6 +7674,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "remove_dns",
       "requestDemoJson": {
         "requestBody": {
@@ -7630,6 +7702,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/records"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -7725,6 +7798,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_note",
       "requestDemoJson": {
         "requestBody": {
@@ -7739,6 +7813,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/notes"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -7867,6 +7942,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "get_transfer_auth_code",
       "requestDemoJson": {
         "requestBody": {
@@ -7882,6 +7958,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/transfer_auth_code"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -8028,6 +8105,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "create_cnnic_privacy",
       "requestDemoJson": {
         "requestBody": {
@@ -8043,6 +8121,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/cnnic_privacy"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -8195,6 +8274,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "list_cnnic_privacy",
       "requestDemoJson": {
         "requestBody": {
@@ -8211,6 +8291,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/cnnic_privacy"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -8337,6 +8418,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "set_cnnic_privacy",
       "requestDemoJson": {
         "requestBody": {
@@ -8351,6 +8433,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/cnnic_privacy"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -8469,6 +8552,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Domains",
       "commandName": "remove_cnnic_privacy",
       "requestDemoJson": {
         "requestBody": {},
@@ -8481,6 +8565,7 @@
           "URL": "https://api.dynadot.com/restful/v2/domains/{domain_name}/cnnic_privacy"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -8650,6 +8735,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact",
       "requestDemoJson": {
         "requestBody": {},
@@ -8662,6 +8748,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -8867,6 +8954,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "contact_list",
       "requestDemoJson": {
         "requestBody": {
@@ -8885,6 +8973,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -9070,6 +9159,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "contact_create",
       "requestDemoJson": {
         "requestBody": {
@@ -9101,6 +9191,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -9320,6 +9411,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "contact_update",
       "requestDemoJson": {
         "requestBody": {
@@ -9351,6 +9443,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -9454,6 +9547,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "contact_delete",
       "requestDemoJson": {
         "requestBody": {},
@@ -9466,6 +9560,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -9634,6 +9729,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "create_cn_audit",
       "requestDemoJson": {
         "requestBody": {
@@ -9654,6 +9750,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/create_cn_audit"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -9756,6 +9853,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_cn_audit_status",
       "requestDemoJson": {
         "requestBody": {
@@ -9769,6 +9867,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_cn_audit_status"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -9881,6 +9980,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_aero_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -9893,6 +9993,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_aero_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -9986,6 +10087,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_aero_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -10004,6 +10106,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_aero_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -10123,6 +10226,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_ca_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -10135,6 +10239,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_ca_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -10272,6 +10377,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_ca_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -10291,6 +10397,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_ca_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -10397,6 +10504,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_eu_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -10409,6 +10517,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_eu_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -10523,6 +10632,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_eu_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -10540,6 +10650,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_eu_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -10647,6 +10758,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_fr_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -10659,6 +10771,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_fr_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -10785,6 +10898,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_fr_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -10802,6 +10916,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_fr_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -10951,6 +11066,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_hk_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -10963,6 +11079,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_hk_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -11123,6 +11240,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_hk_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -11147,6 +11265,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_hk_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -11260,6 +11379,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_ie_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -11272,6 +11392,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_ie_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -11390,6 +11511,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_ie_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -11408,6 +11530,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_ie_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -11521,6 +11644,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_it_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -11533,6 +11657,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_it_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -11652,6 +11777,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_it_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -11670,6 +11796,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_it_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -11777,6 +11904,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_lt_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -11789,6 +11917,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_lt_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -11901,6 +12030,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_lt_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -11918,6 +12048,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_lt_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -12031,6 +12162,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_lv_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -12043,6 +12175,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_lv_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -12161,6 +12294,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_lv_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -12179,6 +12313,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_lv_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -12286,6 +12421,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_music_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -12298,6 +12434,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_music_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -12410,6 +12547,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_music_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -12427,6 +12565,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_music_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -12540,6 +12679,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_no_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -12552,6 +12692,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_no_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -12687,6 +12828,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_no_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -12705,6 +12847,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_no_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -12824,6 +12967,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_pt_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -12836,6 +12980,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_pt_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -12977,6 +13122,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_pt_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -12996,6 +13142,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_pt_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -13115,6 +13262,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_ro_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -13127,6 +13275,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_ro_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -13252,6 +13401,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_ro_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -13271,6 +13421,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_ro_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -13384,6 +13535,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "get_contact_us_setting",
       "requestDemoJson": {
         "requestBody": {},
@@ -13396,6 +13548,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/get_us_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -13517,6 +13670,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Contacts",
       "commandName": "set_contact_us_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -13535,6 +13689,7 @@
           "URL": "https://api.dynadot.com/restful/v2/contacts/{contact_id}/set_us_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -13638,6 +13793,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Servers",
       "commandName": "nameserver_get",
       "requestDemoJson": {
         "requestBody": {},
@@ -13650,6 +13806,7 @@
           "URL": "https://api.dynadot.com/restful/v2/nameservers/{nameserver}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -13739,6 +13896,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Servers",
       "commandName": "nameserver_list",
       "requestDemoJson": {
         "requestBody": {},
@@ -13751,6 +13909,7 @@
           "URL": "https://api.dynadot.com/restful/v2/nameservers"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -13876,6 +14035,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Servers",
       "commandName": "nameserver_register",
       "requestDemoJson": {
         "requestBody": {
@@ -13893,6 +14053,7 @@
           "URL": "https://api.dynadot.com/restful/v2/nameservers/register"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -13996,6 +14157,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Servers",
       "commandName": "nameserver_add_external",
       "requestDemoJson": {
         "requestBody": {},
@@ -14008,6 +14170,7 @@
           "URL": "https://api.dynadot.com/restful/v2/nameservers/{nameserver}/add_external"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -14119,6 +14282,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Servers",
       "commandName": "nameserver_set_ip",
       "requestDemoJson": {
         "requestBody": {
@@ -14135,6 +14299,7 @@
           "URL": "https://api.dynadot.com/restful/v2/nameservers/{nameserver}/set_ip"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -14237,6 +14402,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Servers",
       "commandName": "nameserver_delete",
       "requestDemoJson": {
         "requestBody": {},
@@ -14249,6 +14415,7 @@
           "URL": "https://api.dynadot.com/restful/v2/nameservers/{nameserver}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -14369,6 +14536,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Orders",
       "commandName": "order_get_status",
       "requestDemoJson": {
         "requestBody": {},
@@ -14381,6 +14549,7 @@
           "URL": "https://api.dynadot.com/restful/v2/orders/{order_id}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -14602,6 +14771,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Orders",
       "commandName": "order_get_history",
       "requestDemoJson": {
         "requestBody": {
@@ -14627,6 +14797,7 @@
           "URL": "https://api.dynadot.com/restful/v2/orders"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -14733,6 +14904,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Orders",
       "commandName": "cancel_transfer",
       "requestDemoJson": {
         "requestBody": {
@@ -14747,6 +14919,7 @@
           "URL": "https://api.dynadot.com/restful/v2/orders/{order_id}/cancel_transfer"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -14862,6 +15035,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Orders",
       "commandName": "authorize_transfer_away",
       "requestDemoJson": {
         "requestBody": {
@@ -14877,6 +15051,7 @@
           "URL": "https://api.dynadot.com/restful/v2/orders/{order_id}/authorize_transfer_away"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -14980,6 +15155,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Orders",
       "commandName": "set_transfer_auth_code",
       "requestDemoJson": {
         "requestBody": {
@@ -14995,6 +15171,7 @@
           "URL": "https://api.dynadot.com/restful/v2/orders/{order_id}/update_transfer_auth_code"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -15424,6 +15601,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "get_info",
       "requestDemoJson": {
         "requestBody": {},
@@ -15436,6 +15614,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/info"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -15559,6 +15738,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_default_nameservers",
       "requestDemoJson": {
         "requestBody": {
@@ -15575,6 +15755,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/default_nameservers"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -15657,6 +15838,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_default_domain_forwarding",
       "requestDemoJson": {
         "requestBody": {
@@ -15672,6 +15854,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/default_domain_forwarding"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -15769,6 +15952,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_default_stealth_forwarding",
       "requestDemoJson": {
         "requestBody": {
@@ -15784,6 +15968,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/default_stealth_forwarding"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -15943,6 +16128,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_default_email_forwarding",
       "requestDemoJson": {
         "requestBody": {
@@ -15969,6 +16155,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/default_email_forwarding"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -16063,6 +16250,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_default_contacts",
       "requestDemoJson": {
         "requestBody": {
@@ -16080,6 +16268,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/default_contacts"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -16155,6 +16344,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_default_parking",
       "requestDemoJson": {
         "requestBody": {
@@ -16169,6 +16359,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/default_parking"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -16244,6 +16435,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_default_hosting",
       "requestDemoJson": {
         "requestBody": {
@@ -16258,6 +16450,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/default_hosts"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -16346,6 +16539,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_default_renew_option",
       "requestDemoJson": {
         "requestBody": {
@@ -16360,6 +16554,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/default_renew_option"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -16604,6 +16799,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_default_dns",
       "requestDemoJson": {
         "requestBody": {
@@ -16634,6 +16830,7 @@
           "URL": "https://api.dynadot.com/restful/v2/default_records"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -16709,6 +16906,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "clear_default_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -16723,6 +16921,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/clear_default_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -16813,6 +17012,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Account",
       "commandName": "set_account_lock_status",
       "requestDemoJson": {
         "requestBody": {
@@ -16827,6 +17027,7 @@
           "URL": "https://api.dynadot.com/restful/v2/accounts/account_lock"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -17144,6 +17345,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_list",
       "requestDemoJson": {
         "requestBody": {},
@@ -17155,6 +17357,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     },
     {
@@ -17277,6 +17480,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_create",
       "requestDemoJson": {
         "requestBody": {
@@ -17291,6 +17495,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -17387,6 +17592,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_delete",
       "requestDemoJson": {
         "requestBody": {},
@@ -17399,6 +17605,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -17505,6 +17712,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_name",
       "requestDemoJson": {
         "requestBody": {
@@ -17519,6 +17727,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/name"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -17699,6 +17908,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_dns",
       "requestDemoJson": {
         "requestBody": {
@@ -17730,6 +17940,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/records"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -17871,6 +18082,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_nameserver",
       "requestDemoJson": {
         "requestBody": {
@@ -17889,6 +18101,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/nameservers"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -18027,6 +18240,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_contacts",
       "requestDemoJson": {
         "requestBody": {
@@ -18046,6 +18260,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/contacts"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -18147,6 +18362,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_parking",
       "requestDemoJson": {
         "requestBody": {
@@ -18163,6 +18379,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/parking"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -18271,6 +18488,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_domain_forwarding",
       "requestDemoJson": {
         "requestBody": {
@@ -18288,6 +18506,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/domain_forwarding"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -18399,6 +18618,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_stealth_forwarding",
       "requestDemoJson": {
         "requestBody": {
@@ -18416,6 +18636,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/stealth_forwarding"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -18589,6 +18810,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_email_forwarding",
       "requestDemoJson": {
         "requestBody": {
@@ -18617,6 +18839,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/email_forwarding"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -18718,6 +18941,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_hosting",
       "requestDemoJson": {
         "requestBody": {
@@ -18734,6 +18958,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/hosts"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -18837,6 +19062,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_set_renew_option",
       "requestDemoJson": {
         "requestBody": {
@@ -18853,6 +19079,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/renew_option"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -18955,6 +19182,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Folders",
       "commandName": "folder_clear_setting",
       "requestDemoJson": {
         "requestBody": {
@@ -18969,6 +19197,7 @@
           "URL": "https://api.dynadot.com/restful/v2/folders/{folder_name}/clear_setting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -19199,6 +19428,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "set_for_sale",
       "requestDemoJson": {
         "requestBody": {
@@ -19223,6 +19453,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarkets/domains/{domain_name}/for_sales"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -19347,6 +19578,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "set_other_platform_confirm_action",
       "requestDemoJson": {
         "requestBody": {
@@ -19362,6 +19594,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/domains/{domain_name}/opt_in_fast_transfer"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -19535,6 +19768,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_listing_item",
       "requestDemoJson": {
         "requestBody": {
@@ -19548,6 +19782,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/listings/{domain_name}"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": false
     },
     {
@@ -19715,6 +19950,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "buy_it_now",
       "requestDemoJson": {
         "requestBody": {
@@ -19730,6 +19966,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/listings/{domain_name}/buy_it_now"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -19884,6 +20121,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "buy_expired_closeout_domain",
       "requestDemoJson": {
         "requestBody": {
@@ -19898,6 +20136,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/expired_closeouts/{domain_name}/purchase"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -20049,6 +20288,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "add_backorder_request",
       "requestDemoJson": {
         "requestBody": {},
@@ -20061,6 +20301,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/backorders/requests/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -20189,6 +20430,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "delete_backorder_request",
       "requestDemoJson": {
         "requestBody": {},
@@ -20201,6 +20443,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/backorders/requests/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -20390,6 +20633,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_closed_auctions",
       "requestDemoJson": {
         "requestBody": {
@@ -20405,6 +20649,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/auctions/closed"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": false
     },
     {
@@ -20772,6 +21017,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_auction_details",
       "requestDemoJson": {
         "requestBody": {
@@ -20785,6 +21031,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/auctions/{domain_name}"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": false
     },
     {
@@ -20909,6 +21156,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_whois_stats",
       "requestDemoJson": {
         "requestBody": {
@@ -20923,6 +21171,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/whois_stats"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": false
     },
     {
@@ -21060,6 +21309,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "backorder_request_list",
       "requestDemoJson": {
         "requestBody": {
@@ -21075,6 +21325,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/backorders/requests"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -21488,6 +21739,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "place_auction_bid",
       "requestDemoJson": {
         "requestBody": {
@@ -21504,6 +21756,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/auctions/bids/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -21667,6 +21920,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_auction_bids",
       "requestDemoJson": {
         "requestBody": {
@@ -21683,6 +21937,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/auctions/bids"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -21799,6 +22054,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "set_auction_installment_plan",
       "requestDemoJson": {
         "requestBody": {
@@ -21815,6 +22071,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/auctions/{domain_name}/installment_plan"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -21933,6 +22190,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_auction_installment_plan",
       "requestDemoJson": {
         "requestBody": {
@@ -21947,6 +22205,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/auctions/{domain_name}/installment_plan"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -22186,6 +22445,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_open_auctions",
       "requestDemoJson": {
         "requestBody": {
@@ -22206,6 +22466,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/auctions/open"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": false
     },
     {
@@ -22396,6 +22657,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "add_user_auction",
       "requestDemoJson": {
         "requestBody": {
@@ -22417,6 +22679,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/auctions/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -22512,6 +22775,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "close_auction",
       "requestDemoJson": {
         "requestBody": {},
@@ -22524,6 +22788,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/auctions/{auction_id}/close"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -22691,6 +22956,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "create_express_pay_link",
       "requestDemoJson": {
         "requestBody": {
@@ -22710,6 +22976,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/pay_links"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -22855,6 +23122,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_express_pay_link",
       "requestDemoJson": {
         "requestBody": {},
@@ -22867,6 +23135,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/pay_links/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -23027,6 +23296,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "list_express_pay_link",
       "requestDemoJson": {
         "requestBody": {
@@ -23043,6 +23313,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/pay_links"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -23131,6 +23402,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "delete_express_pay_link",
       "requestDemoJson": {
         "requestBody": {},
@@ -23143,6 +23415,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/pay_links/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -23326,6 +23599,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_listings",
       "requestDemoJson": {
         "requestBody": {
@@ -23343,6 +23617,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/listings"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": false
     },
     {
@@ -23567,6 +23842,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_expired_closeout_domains",
       "requestDemoJson": {
         "requestBody": {
@@ -23583,6 +23859,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/get_expired_closeout_domains"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": false
     },
     {
@@ -23736,6 +24013,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_afternic_domain",
       "requestDemoJson": {
         "requestBody": {
@@ -23754,6 +24032,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/get_afternic_domain"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": false
     },
     {
@@ -23879,6 +24158,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "get_sedo_domain",
       "requestDemoJson": {
         "requestBody": {
@@ -23897,6 +24177,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/get_sedo_domain"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": false
     },
     {
@@ -24043,6 +24324,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "listing_on_afternic",
       "requestDemoJson": {
         "requestBody": {
@@ -24058,6 +24340,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/listing_on_afternic"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -24219,6 +24502,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "listing_on_sedo",
       "requestDemoJson": {
         "requestBody": {
@@ -24236,6 +24520,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/listing_on_sedo"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -24342,6 +24627,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "buy_afternic_domain",
       "requestDemoJson": {
         "requestBody": {
@@ -24357,6 +24643,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/buy_afternic_domain"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -24463,6 +24750,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "buy_sedo_domain",
       "requestDemoJson": {
         "requestBody": {
@@ -24478,6 +24766,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/buy_sedo_domain"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -24611,6 +24900,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "other_registrar_domain_verification",
       "requestDemoJson": {
         "requestBody": {
@@ -24625,6 +24915,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/other_registrar/{domain_name}/verification"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -24727,6 +25018,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "verify_other_registrar_domain",
       "requestDemoJson": {
         "requestBody": {
@@ -24743,6 +25035,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/other_registrar/verify"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -24919,6 +25212,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "other_registrar_domain_list",
       "requestDemoJson": {
         "requestBody": {
@@ -24934,6 +25228,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/other_registrar/domains"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -25017,6 +25312,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "add_other_registrar_domain",
       "requestDemoJson": {
         "requestBody": {
@@ -25033,6 +25329,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/other_registrar/domains"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": true
     },
     {
@@ -25257,6 +25554,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "listing_other_registrar_domain",
       "requestDemoJson": {
         "requestBody": {
@@ -25288,6 +25586,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/{domain_name}/listing_other_registrar_domain"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -25479,6 +25778,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Aftermarkets",
       "commandName": "backorder_list",
       "requestDemoJson": {
         "requestBody": {
@@ -25496,6 +25796,7 @@
           "URL": "https://api.dynadot.com/restful/v2/aftermarket/backorders"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -25639,6 +25940,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Others",
       "commandName": "get_site_builder",
       "requestDemoJson": {
         "requestBody": {},
@@ -25651,6 +25953,7 @@
           "URL": "https://api.dynadot.com/restful/v2/sitebuilders/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -25770,6 +26073,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Others",
       "commandName": "list_site_builder",
       "requestDemoJson": {
         "requestBody": {},
@@ -25782,6 +26086,7 @@
           "URL": "https://api.dynadot.com/restful/v2/sitebuilders"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -25959,6 +26264,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Others",
       "commandName": "create_site_builder",
       "requestDemoJson": {
         "requestBody": {
@@ -25973,6 +26279,7 @@
           "URL": "https://api.dynadot.com/restful/v2/sitebuilders/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -26150,6 +26457,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Others",
       "commandName": "upgrade_site_builder",
       "requestDemoJson": {
         "requestBody": {
@@ -26164,6 +26472,7 @@
           "URL": "https://api.dynadot.com/restful/v2/sitebuilders/{domain_name}/upgrade"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -26259,6 +26568,7 @@
       ],
       "ResponseParameters": [],
       "apiVersion": "v2",
+      "category": "Others",
       "commandName": "delete_email_hosting",
       "requestDemoJson": {
         "requestBody": {
@@ -26273,6 +26583,7 @@
           "URL": "https://api.dynadot.com/restful/v2/email_hosting/{domain_name}"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -26386,6 +26697,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Others",
       "commandName": "list_email_hosting",
       "requestDemoJson": {
         "requestBody": {},
@@ -26398,6 +26710,7 @@
           "URL": "https://api.dynadot.com/restful/v2/email_hosting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -26589,6 +26902,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Others",
       "commandName": "create_email_hosting",
       "requestDemoJson": {
         "requestBody": {
@@ -26607,6 +26921,7 @@
           "URL": "https://api.dynadot.com/restful/v2/email_hosting"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -26780,6 +27095,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Others",
       "commandName": "upgrade_email_hosting",
       "requestDemoJson": {
         "requestBody": {
@@ -26795,6 +27111,7 @@
           "URL": "https://api.dynadot.com/restful/v2/email_hosting/{domain_name}/upgrade"
         }
       },
+      "requireSignature": true,
       "supportApiSandbox": false
     },
     {
@@ -27075,6 +27392,7 @@
         }
       ],
       "apiVersion": "v2",
+      "category": "Others",
       "commandName": "list_coupons",
       "requestDemoJson": {
         "requestBody": {
@@ -27088,6 +27406,7 @@
           "URL": "https://api.dynadot.com/restful/v2/orders/coupons"
         }
       },
+      "requireSignature": false,
       "supportApiSandbox": true
     }
   ],
