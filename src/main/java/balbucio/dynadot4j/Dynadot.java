@@ -1,6 +1,7 @@
 package balbucio.dynadot4j;
 
 import balbucio.dynadot4j.client.AccountClient;
+import balbucio.dynadot4j.client.AftermarketClient;
 import balbucio.dynadot4j.client.ContactClient;
 import balbucio.dynadot4j.client.DomainClient;
 import balbucio.dynadot4j.client.OrderClient;
@@ -23,6 +24,7 @@ public class Dynadot {
     private final ContactClient contactClient;
     private final AccountClient accountClient;
     private final OrderClient orderClient;
+    private final AftermarketClient aftermarketClient;
 
     public Dynadot(DynadotConfig config) throws NoSuchAlgorithmException {
         this.config = config;
@@ -40,6 +42,7 @@ public class Dynadot {
         this.contactClient = new ContactClient(this);
         this.accountClient = new AccountClient(this);
         this.orderClient = new OrderClient(this);
+        this.aftermarketClient = new AftermarketClient(this);
     }
 
     public static DynadotConfig.DynadotConfigBuilder createDefault() {

@@ -5,7 +5,16 @@ import java.math.BigDecimal;
 public class DynadotConvertUtils {
 
     public static boolean asBool(String value) {
-        return value != null && value.equalsIgnoreCase("Yes");
+        if (value == null) return false;
+        String v = value.trim().toLowerCase();
+        return v.equals("yes") || v.equals("true") || v.equals("1") || v.equals("y");
+    }
+
+    public static boolean asBool(Object value) {
+        if (value == null) return false;
+        if (value instanceof Boolean b) return b;
+        if (value instanceof Number n) return n.intValue() != 0;
+        return asBool(value.toString());
     }
 
     public static double priceAsDouble(String currency, String value) {
