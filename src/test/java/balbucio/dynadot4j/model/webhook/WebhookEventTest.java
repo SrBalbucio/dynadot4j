@@ -190,6 +190,46 @@ class WebhookEventTest {
     }
 
     @Test
+    void parseShouldTolerateStringDomainList() {
+        WebhookEvent<?> event = WebhookEvent.parse("""
+                {"event":"whois_verification_required","event_id":5,"timestamp":1700000000000,"data":{"whois_name":"John","contact_id":9,"verify_link":"https://example.com","verify_end_time":"2024-01-01","domain_list":["example.com","example.net"]}}
+                """, gson);
+        assertEquals(WebhookEventType.WHOIS_VERIFICATION_REQUIRED, event.getEventType());
+        WhoisVerificationRequiredData data = event.getDataAs();
+        assertNotNull(data.getDomainList());
+        assertEquals(2, data.getDomainList().size());
+        assertEquals("example.com", data.getDomainList().get(0).optString("domain", null));
+        assertEquals("example.net", data.getDomainList().get(1).optString("domain", null));
+    }
+
+    @Test
+    void parseShouldTolerateNullAndPrimitiveListItems() {
+        WebhookEvent<?> event = WebhookEvent.parse("""
+                {"event":"order_completed","event_id":12345,"timestamp":1700000000000,"data":{"order_id":42,"order_item_list":[{"item":"domain"},null,"plain",42,true,[1,2]]}}
+                """, gson);
+        assertEquals(WebhookEventType.ORDER_COMPLETED, event.getEventType());
+        OrderEventData data = event.getDataAs();
+        assertNotNull(data.getOrderItemList());
+        assertEquals(6, data.getOrderItemList().size());
+        assertEquals("domain", data.getOrderItemList().get(0).getString("item"));
+        assertNull(data.getOrderItemList().get(1));
+        assertEquals("plain", data.getOrderItemList().get(2).optString("domain", null));
+    }
+
+    @Test
+    void parseShouldTolerateNonObjectData() {
+        WebhookEvent<?> arrayData = WebhookEvent.parse("""
+                {"event":"order_completed","event_id":1,"timestamp":1700000000000,"data":[1,2]}
+                """, gson);
+        assertNotNull(arrayData.getData());
+
+        WebhookEvent<?> unknownArrayData = WebhookEvent.parse("""
+                {"event":"some_future_event","event_id":9,"timestamp":1700000000000,"data":[1,2]}
+                """, gson);
+        assertTrue(unknownArrayData.getData() instanceof org.json.JSONArray);
+    }
+
+    @Test
     void toStringShouldNotThrow() {
         WebhookEvent<?> event = WebhookEvent.parse("""
                 {"event":"order_completed","event_id":12345,"timestamp":1700000000000,"data":{"order_id":42}}
