@@ -55,9 +55,9 @@ class AftermarketClientTest {
     }
 
     @Test
-    void getAuctionDetailsShouldGetCorrectPathAndParseIsDynadot() throws Exception {
+    void getAuctionDetailsShouldGetCorrectPathAndParseAuctionItemDetails() throws Exception {
         DynadotHttpResponse response = gson.fromJson("""
-                {"data":{"auction_item_details":{"auction_id":12345,"domain_name":"example.com","is_dynadot":"true","max_installment_months":12}}}
+                {"data":{"auction_item_details":{"auction_id":12345,"domain_name":"example.com","max_installment_months":12}}}
                 """, DynadotHttpResponse.class);
         when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
 
@@ -67,13 +67,11 @@ class AftermarketClientTest {
         assertNotNull(details);
         assertEquals(12345, details.getAuctionId());
         assertEquals("example.com", details.getDomainName());
-        assertEquals("true", details.getIsDynadot());
-        assertTrue(details.isDynadotAuction());
         assertEquals(12, details.getMaxInstallmentMonths());
     }
 
     @Test
-    void getAuctionDetailsShouldHandleMissingIsDynadot() throws Exception {
+    void getAuctionDetailsShouldHandleMissingOptionalFields() throws Exception {
         DynadotHttpResponse response = gson.fromJson("""
                 {"data":{"auction_item_details":{"auction_id":1,"domain_name":"example.com"}}}
                 """, DynadotHttpResponse.class);
@@ -82,14 +80,14 @@ class AftermarketClientTest {
         var details = client.getAuctionDetails("example.com").get();
 
         assertNotNull(details);
-        assertNull(details.getIsDynadot());
-        assertFalse(details.isDynadotAuction());
+        assertEquals(1, details.getAuctionId());
+        assertTrue(details.getBidHistory().isEmpty());
     }
 
     @Test
     void placeAuctionBidShouldPostCorrectPathAndBody() throws Exception {
         DynadotHttpResponse response = gson.fromJson("""
-                {"data":{"auction_item_details":{"auction_id":12345,"domain_name":"example.com","is_dynadot":"Yes"}}}
+                {"data":{"auction_item_details":{"auction_id":12345,"domain_name":"example.com"}}}
                 """, DynadotHttpResponse.class);
         when(requester.post(anyString(), anyString())).thenReturn(CompletableFuture.completedFuture(response));
 
@@ -100,7 +98,7 @@ class AftermarketClientTest {
         assertTrue(bodyCaptor.getValue().contains("\"currency\":\"USD\""));
         assertTrue(bodyCaptor.getValue().contains("\"is_backorder_auction\":false"));
         assertNotNull(details);
-        assertTrue(details.isDynadotAuction());
+        assertEquals("example.com", details.getDomainName());
     }
 
     @Test

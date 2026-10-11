@@ -88,12 +88,6 @@ public class AuctionItemDetails {
     private String installmentStatus;
     @SerializedName("max_installment_months")
     private Integer maxInstallmentMonths;
-    @SerializedName("is_dynadot")
-    private String isDynadot;
-
-    public boolean isDynadotAuction() {
-        return DynadotConvertUtils.asBool(isDynadot);
-    }
 
     public boolean isHighBidder() {
         return DynadotConvertUtils.asBool(isHighBidder);
