@@ -4,6 +4,7 @@ import balbucio.dynadot4j.Dynadot;
 import balbucio.dynadot4j.exception.InvalidDomainException;
 import balbucio.dynadot4j.model.AuctionDetailsResponse;
 import balbucio.dynadot4j.model.AuctionItemDetails;
+import balbucio.dynadot4j.model.ListingListResponse;
 import lombok.NonNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
@@ -19,6 +20,7 @@ import java.util.concurrent.Future;
  * <ul>
  *     <li>{@code get_auction_details} -> {@code GET /restful/v2/aftermarket/auctions/{domain_name}?currency=USD}</li>
  *     <li>{@code place_auction_bid} -> {@code POST /restful/v2/aftermarket/auctions/bids/{domain_name}}</li>
+ *     <li>{@code get_listings} -> {@code GET /restful/v2/aftermarket/listings}</li>
  * </ul>
  */
 public class AftermarketClient extends Client {
@@ -73,6 +75,44 @@ public class AftermarketClient extends Client {
     public Future<AuctionItemDetails> placeAuctionBid(@NonNull String domainName, double bidAmount,
                                                       @Nullable String currency) {
         return placeAuctionBid(domainName, bidAmount, currency, null);
+    }
+
+    /**
+     * Lista os anúncios públicos do marketplace da Dynadot.
+     *
+     * <p>Contrato: {@code GET /restful/v2/aftermarket/listings} com
+     * {@code currency}, {@code page} e {@code page_size} obrigatórios
+     * ({@code page} começa em 1 e {@code page_size} aceita até 20000).
+     *
+     * @param currency            moeda dos preços (ex.: USD, BRL)
+     * @param page                índice da página, começando em 1
+     * @param pageSize            itens por página (1 a 20000)
+     * @param excludePendingSale  excluir anúncios com venda pendente (opcional)
+     * @param showOtherRegistrar  incluir anúncios de outros registradores (opcional)
+     * @return página de anúncios numa promessa
+     */
+    public Future<ListingListResponse> getListings(@NonNull String currency, int page, int pageSize,
+                                                   @Nullable Boolean excludePendingSale,
+                                                   @Nullable Boolean showOtherRegistrar) {
+        if (currency.isEmpty()) throw new IllegalArgumentException("currency is required.");
+        if (page < 1) throw new IllegalArgumentException("page must start at 1.");
+        if (pageSize < 1 || pageSize > 20000) {
+            throw new IllegalArgumentException("page_size must be between 1 and 20000.");
+        }
+
+        List<String> params = new ArrayList<>();
+        params.add("currency=" + currency.toUpperCase());
+        params.add("page=" + page);
+        params.add("page_size=" + pageSize);
+        if (excludePendingSale != null) params.add("exclude_pending_sale=" + excludePendingSale);
+        if (showOtherRegistrar != null) params.add("show_other_registrar=" + showOtherRegistrar);
+
+        return requester.get(getPath("listings") + "?" + String.join("&", params))
+                .thenApply(response -> response.asClazz(gson, ListingListResponse.class));
+    }
+
+    public Future<ListingListResponse> getListings(@NonNull String currency, int page, int pageSize) {
+        return getListings(currency, page, pageSize, null, null);
     }
 
     private String getPath(String additional) {
