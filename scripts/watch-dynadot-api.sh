@@ -2,7 +2,8 @@
 set -euo pipefail
 
 DOC_URL="${DYNADOT_API_SPEC_URL:-https://www.dynadot.com/domain/api-document?getCommandInfoData=1&apiVersion=2.0.0}"
-BASELINE_PATH="${DYNADOT_API_BASELINE:-docs/dynadot-api/latest.normalized}"
+BASELINE_JSON="${DYNADOT_API_BASELINE:-docs/dynadot-api/latest.normalized}"
+BASELINE_HTML="${DYNADOT_API_BASELINE_HTML:-docs/dynadot-api/latest.normalized.html}"
 WORK_DIR="${DYNADOT_API_WORK_DIR:-target/dynadot-api-watch}"
 RAW_PATH="$WORK_DIR/current.raw"
 CURRENT_PATH="$WORK_DIR/current.normalized"
@@ -39,19 +40,42 @@ curl -fsSL \
   "$DOC_URL" \
   -o "$RAW_PATH"
 
+# Detect the payload format. Dynadot has served this URL both as a
+# machine-readable JSON document and as an HTML (Nuxt SPA) page.
+FORMAT="html"
 if command -v jq >/dev/null 2>&1 && jq -e . "$RAW_PATH" >/dev/null 2>&1; then
-  jq -S . "$RAW_PATH" > "$CURRENT_PATH"
+  FORMAT="json"
 elif [[ -n "$PYTHON_BIN" ]] && "$PYTHON_BIN" -c 'import json, sys; json.load(open(sys.argv[1], encoding="utf-8", errors="replace"))' "$RAW_PATH" >/dev/null 2>&1; then
-  "$PYTHON_BIN" -c 'import json, sys; sys.stdout.reconfigure(encoding="utf-8"); data = json.load(open(sys.argv[1], encoding="utf-8", errors="replace")); json.dump(data, sys.stdout, ensure_ascii=False, indent=2, sort_keys=True); print()' "$RAW_PATH" > "$CURRENT_PATH"
+  FORMAT="json"
+fi
+
+if [[ "$FORMAT" == "json" ]]; then
+  BASELINE_PATH="$BASELINE_JSON"
+else
+  BASELINE_PATH="$BASELINE_HTML"
+fi
+
+echo "Detected payload format: $FORMAT (baseline: $BASELINE_PATH)"
+
+if [[ "$FORMAT" == "json" ]]; then
+  if command -v jq >/dev/null 2>&1; then
+    jq -S . "$RAW_PATH" > "$CURRENT_PATH"
+  elif [[ -n "$PYTHON_BIN" ]]; then
+    "$PYTHON_BIN" -c 'import json, sys; sys.stdout.reconfigure(encoding="utf-8"); data = json.load(open(sys.argv[1], encoding="utf-8", errors="replace")); json.dump(data, sys.stdout, ensure_ascii=False, indent=2, sort_keys=True); print()' "$RAW_PATH" > "$CURRENT_PATH"
+  else
+    echo "Cannot normalize JSON payload: neither jq nor python is available." >&2
+    exit 2
+  fi
+elif [[ -n "$PYTHON_BIN" ]]; then
+  # HTML fallback: strip volatile Nuxt bundles/hashes/UUIDs so the diff only
+  # fires on real documentation changes.
+  "$PYTHON_BIN" scripts/normalize-dynadot-html.py "$RAW_PATH" "$CURRENT_PATH"
 else
   perl -0ne '
     s/\r\n?/\n/g;
     s/<script\b[^>]*>.*?<\/script>//gis;
     s/<style\b[^>]*>.*?<\/style>//gis;
     s/<!--.*?-->//gs;
-    if (/(<div class="sidenav open-menu">.*?)(?:<div id="chat-widget"|<footer|<\/body>)/s) {
-      $_ = $1;
-    }
     s/data-cfemail="[^"]*"/data-cfemail="<cfemail>"/gi;
     s/[?&](utm_[^=]+|drefid|cache|cb|_)=([^"\s&<>]+)/?/gi;
     s/\b[0-9]{10,13}\b/<timestamp>/g;
@@ -66,7 +90,18 @@ else
   ' > "$CURRENT_PATH"
 fi
 
-perl -0pi -e 's/\b\d{13}\b/0/g' "$CURRENT_PATH"
+# Prepend the detected format so a source-format switch is visible as a single
+# line instead of masquerading as a documentation change.
+TMP_PATH="$CURRENT_PATH.tmp"
+{
+  echo "SOURCE: $FORMAT"
+  cat "$CURRENT_PATH"
+} > "$TMP_PATH"
+mv "$TMP_PATH" "$CURRENT_PATH"
+
+if [[ "$FORMAT" != "json" ]]; then
+  perl -0pi -e 's/\b\d{13}\b/0/g' "$CURRENT_PATH"
+fi
 
 if [[ "$UPDATE_BASELINE" == "true" ]]; then
   mkdir -p "$(dirname "$BASELINE_PATH")"
