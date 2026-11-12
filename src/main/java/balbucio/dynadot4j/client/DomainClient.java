@@ -69,15 +69,51 @@ public class DomainClient extends Client {
      * @return resultado da pesquisa numa promessa
      */
     public Future<List<BulkSearchResult>> searchBulk(@NonNull List<String> domainNames, @Nullable String currency) {
+        return searchBulk(domainNames, currency, null);
+    }
+
+    /**
+     * Pesquisa a disponibilidade de vários domínios e recupera detalhes para registro.
+     *
+     * <p>Contrato: {@code GET /domains/bulk_search} com {@code domain_name_list} (obrigatório,
+     * separado por vírgulas, sem espaços; o máximo por requisição depende do nível de preço da
+     * conta — Regular 5, Bulk 10, Super Bulk 20), {@code show_price}, {@code currency} e
+     * {@code timeout} (opcional).
+     *
+     * @param domainNames    domínios a pesquisar (o chamador deve respeitar o limite do nível da conta)
+     * @param currency       moeda em que os valores devem ser retornados (USD, BRL)
+     * @param timeoutSeconds espera máxima pela consulta ao registro, em segundos (1-60). Quando
+     *                       informado, a Dynadot responde com o melhor resultado disponível em vez
+     *                       de estourar o tempo: cada item traz {@code source}
+     *                       ({@code registry}/{@code cache}) e {@code confidence}
+     *                       ({@code high}/{@code low}), e os que não ficaram prontos vêm com
+     *                       {@code details_error_message}
+     * @return resultado da pesquisa numa promessa
+     */
+    public Future<List<BulkSearchResult>> searchBulk(@NonNull List<String> domainNames, @Nullable String currency,
+                                                     @Nullable Integer timeoutSeconds) {
         if (domainNames.isEmpty())
             throw new InvalidDomainException(domainNames);
         if (currency == null)
             currency = "USD";
+        if (timeoutSeconds != null && (timeoutSeconds < 1 || timeoutSeconds > 60))
+            throw new IllegalArgumentException("timeout must be between 1 and 60 seconds.");
 
-        CompletableFuture<DynadotHttpResponse> future =
-                requester.get(getPath("bulk_search?show_price=true&currency=" + currency.toUpperCase() + "&domain_name_list=" + String.join(",", domainNames)));
+        List<String> params = new ArrayList<>();
+        params.add("show_price=true");
+        params.add("currency=" + currency.toUpperCase());
+        params.add("domain_name_list=" + String.join(",", domainNames));
+        if (timeoutSeconds != null) params.add("timeout=" + timeoutSeconds);
 
-        return future.thenApply((response) -> response.asJSON()
+        return requester.get(getPath("bulk_search?" + String.join("&", params)))
+                .thenApply(this::parseBulkResults);
+    }
+
+    private List<BulkSearchResult> parseBulkResults(DynadotHttpResponse response) {
+        if (!response.asJSON().has("domain_result_list"))
+            return new ArrayList<>();
+
+        return response.asJSON()
                 .getJSONArray("domain_result_list").toList().stream()
                 .map((obj) -> {
                     try {
@@ -87,7 +123,7 @@ public class DomainClient extends Client {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(ArrayList::new)));
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
@@ -514,17 +550,7 @@ public class DomainClient extends Client {
         if (status != null) params.add("status=" + status);
         if (!params.isEmpty()) query.append("?").append(String.join("&", params));
         return requester.get(getPath(query.toString()))
-                .thenApply(response -> response.asJSON()
-                        .getJSONArray("domain_result_list").toList().stream()
-                        .map(obj -> {
-                            try {
-                                return gson.fromJson(new JSONObject((Map<String, Object>) obj).toString(), BulkSearchResult.class);
-                            } catch (JsonSyntaxException e) {
-                                return null;
-                            }
-                        })
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toCollection(ArrayList::new)));
+                .thenApply(this::parseBulkResults);
     }
 
     /**

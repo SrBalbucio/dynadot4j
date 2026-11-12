@@ -126,6 +126,54 @@ class DomainClientTest {
     }
 
     @Test
+    void searchBulkWithTimeoutShouldSendTimeoutAndExposeSourceAndConfidence() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"domain_result_list":[
+                  {"domain_name":"test.com","available":"Yes","source":"registry","confidence":"high"},
+                  {"domain_name":"test.net","details_error_message":"busy"}
+                ]}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        List<BulkSearchResult> results = client.searchBulk(List.of("test.com", "test.net"), "USD", 10).get();
+
+        verify(requester).get(pathCaptor.capture());
+        assertTrue(pathCaptor.getValue().contains("timeout=10"));
+        assertEquals("registry", results.get(0).getSource());
+        assertEquals("high", results.get(0).getConfidence());
+        assertEquals("busy", results.get(1).getDetailsErrorMessage());
+    }
+
+    @Test
+    void searchBulkWithoutTimeoutShouldNotSendTimeout() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{"domain_result_list":[]}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        client.searchBulk(List.of("test.com"), "USD").get();
+
+        verify(requester).get(pathCaptor.capture());
+        assertFalse(pathCaptor.getValue().contains("timeout="));
+    }
+
+    @Test
+    void searchBulkShouldRejectTimeoutOutsideAllowedRange() {
+        assertThrows(IllegalArgumentException.class, () -> client.searchBulk(List.of("test.com"), "USD", 0));
+        assertThrows(IllegalArgumentException.class, () -> client.searchBulk(List.of("test.com"), "USD", 61));
+    }
+
+    @Test
+    void searchBulkShouldTolerateMissingResultList() throws Exception {
+        DynadotHttpResponse response = gson.fromJson("""
+                {"data":{}}
+                """, DynadotHttpResponse.class);
+        when(requester.get(anyString())).thenReturn(CompletableFuture.completedFuture(response));
+
+        assertTrue(client.searchBulk(List.of("test.com"), "USD").get().isEmpty());
+    }
+
+    @Test
     void getSuggestionSearchShouldReturnList() throws Exception {
         DynadotHttpResponse response = gson.fromJson("""
                 {"data":{"domain_list":["test.com","test.net"]}}
